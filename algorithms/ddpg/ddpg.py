@@ -122,16 +122,14 @@ def learn(network,
             logger.info("================== The {} episode start !!! ===================".format(cycle))
 
             for t_rollout in range(nb_rollout_steps):
-                logger.info("================== The {} steps finish  !!! ===================".format(t_rollout))
+                # logger.info("================== The {} steps finish  !!! ===================".format(t_rollout))
 
                 """ choose next action """
                 action, q, _, _ = agent.step(obs, stddev, apply_noise=True, compute_Q=True)
-                print(action)
-
-                new_obs, r, done, safe_or_not = env.step(max_action * action, t_rollout)
-
 
                 new_obs, next_state, r, done, safe_or_not = env.step(max_action * action)
+                """ normalize state """
+                print("\nState:", state, "\nReward", r)
 
                 if safe_or_not is False:
                     break
@@ -139,10 +137,7 @@ def learn(network,
                 episode_reward += r
                 episode_step += 1
 
-                episode_states.append([cp.deepcopy(state), cp.deepcopy(final_action), np.array(cp.deepcopy(r)), cp.deepcopy(next_state)])
-
                 episode_states.append([cp.deepcopy(state), cp.deepcopy(action), np.array(cp.deepcopy(r)), cp.deepcopy(next_state)])
-
 
                 epoch_actions.append(action)
                 epoch_qs.append(q)
@@ -194,26 +189,20 @@ def learn(network,
         epochs_states.append(cp.deepcopy(epoch_episode_states))
 
         # # save data
-        np.save(data_path + 'train_reward_' + algorithm_name + '_' + noise_type + file_name, epochs_rewards)
-        np.save(data_path + 'train_step_' + algorithm_name + '_' + noise_type + file_name, epochs_steps)
-        np.save(data_path + 'train_states_' + algorithm_name + '_' + noise_type + file_name, epochs_states)
-        np.save(data_path + 'train_times_' + algorithm_name + '_' + noise_type + file_name, epochs_times)
+        np.save(data_path + 'train_reward_' + "DDPG" + '_' + noise_type + file_name, epochs_rewards)
+        np.save(data_path + 'train_step_' + "DDPG" + '_' + noise_type + file_name, epochs_steps)
+        np.save(data_path + 'train_states_' + "DDPG" + '_' + noise_type + file_name, epochs_states)
+        np.save(data_path + 'train_times_' + "DDPG" + '_' + noise_type + file_name, epochs_times)
 
     # # agent save
-    agent.store(model_path + 'train_model_' + algorithm_name + '_' + noise_type + file_name)
+    agent.store(model_path + 'train_model_' + "DDPG" + '_' + noise_type + file_name)
 
 
 if __name__ == '__main__':
 
     """ import environment """
 
-    algorithm_name = 'dyna_nn_ddpg'
-    file_name = '_epochs_5_episodes_100_none_fuzzy'
-    data_path = './prediction_data/'
-    model_path = './prediction_model/'
-
     env = ArmEnv()
-    algorithm_name = 'dyna_nn_ddpg'
     data_path = './prediction_data/'
     model_path = './prediction_model/'
     file_name = '_epochs_5_episodes_100_none_fuzzy'

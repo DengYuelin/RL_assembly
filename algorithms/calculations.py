@@ -1,13 +1,11 @@
 # Setting according to the defintion of problem
 import numpy as np
-
-
-# boundary for action out put
-action_bound = [-20, 20]
-
+import copy as cp
 
 def reword(s):
-    r = -(abs(s[0]) + abs(s[1]) + abs(s[2]))*10 - (abs(s[3]) + abs(s[4]) + abs(s[5] + 1.5))
+    r = -(abs(s[0]) + abs(s[1]) + abs(s[2]))*10
+    if abs(s[0]) < 0.001 and abs(s[1]) < 0.001 and abs(s[2]) < 0.001:
+        r = 1
     if abs(s[0]) < 0.001 and abs(s[1]) < 0.001 and abs(s[2]) < 0.001:
         done = True
     else:
@@ -26,10 +24,21 @@ def actions(a, mode):  # here a ∈ action_bound
 
 # this function checks if the force and torque extends safety value
 def safetycheck(s):
-    if s[3] >= 100 or s[4]>= 100 or s[5] >= 100:
+    if s[3] >= 10 or s[4]>= 10 or s[5] >= 10:
         return False
-    elif s[6] >= 100 or s[7]>= 100 or s[8] >= 100:
+    elif s[6] >= 10 or s[7]>= 10 or s[8] >= 10:
         return False
     else:
         return True
+
+def code_state(current_state):
+    state = cp.deepcopy(current_state)
+
+    """normalize the state"""
+    scale = 0.1
+    final_state = state / scale
+
+    '''Add Threshold'''
+
+    return final_state
 

@@ -2,7 +2,6 @@ import numpy as np
 import algorithms.calculations as cal
 from support_files import vrep
 import time
-import copy as cp
 from gym import spaces
 
 
@@ -31,13 +30,6 @@ class ArmEnv(object):
         self.add_noise = add_noise  # or True
         self.pull_terminal = False
 
-        '''Wrong'''
-        self.state_high = np.array([50, 50, 0, 5, 5, 6, 1453, 70, 995, 5, 5, 6])
-        self.state_low = np.array([-50, -50, -50, -5, -5, -6, 1456, 76, 985, -5, -5, -6])
-        self.terminated_state = np.array([30, 30, 30, 2, 2, 2])
-        self.observation_space = spaces.Box(low=self.state_low, high=self.state_high,
-                                            shape=(self.observation_dim,), dtype=np.float32)
-        
         """information for action and state"""
         self.terminated_state = np.array([30, 30, 30, 2, 2, 2])
         self.action_space = spaces.Box(low=-1, high=1,
@@ -49,8 +41,7 @@ class ArmEnv(object):
         # self.fc = fuzzy_control(low_output=np.array([0., 0., 0., 0., 0., 0.]),
         #                         high_output=np.array([0.03, 0.03, 0.004, 0.03, 0.03, 0.03]))
 
-        
-        '''vrep init session''' 
+        '''vrep init session'''
         print('Program started')
         vrep.simxFinish(-1)  # just in case, close all opened connections
         # Connect to V-REP, get clientID
@@ -60,7 +51,7 @@ class ArmEnv(object):
         vrep.c_Synchronous(self.clientID, True)
 
         if self.clientID != -1:  # confirm connection
-            print('Connected to remote API server')
+            print('Connected to remote API server\n')
 
         else:
             exit('Failed connecting to remote API server')
@@ -69,24 +60,30 @@ class ArmEnv(object):
 
         vrep.simxSetIntegerSignal(self.clientID, "Apimode", 1, vrep.simx_opmode_oneshot)  # activate apimode
 
-        # vrep sensor setup
+        '''vrep sensor setup'''
         # Setup the force sensor
         self.errorCode, self.force_sensor_handle = vrep.simxGetObjectHandle(self.clientID, 'IRB140_connection',
                                                                             vrep.simx_opmode_blocking)
         self.errorCode, self.target_handle = vrep.simxGetObjectHandle(self.clientID, 'Target',
-                                                                            vrep.simx_opmode_blocking)
-        print("IRB140_connection", self.errorCode, self.force_sensor_handle)
-        print("Target", self.errorCode, self.target_handle)
+                                                                      vrep.simx_opmode_blocking)
         self.errorCode, self.forceState, self.forceVector, self.torqueVector = \
             vrep.simxReadForceSensor(self.clientID, self.force_sensor_handle, vrep.simx_opmode_streaming)
-        self.errorCode, self.position = \
-            vrep.simxGetObjectPosition(self.clientID, self.force_sensor_handle, self.target_handle, vrep.simx_opmode_streaming)
         while self.errorCode:
-            self.errorCode, self.position = vrep.simxGetObjectPosition(self.clientID, self.force_sensor_handle, self.target_handle,
-                                                                            vrep.simx_opmode_buffer)
-        print("init force sensor IRB140_connection", self.position, self.forceState)
+            self.errorCode, self.forceState, self.forceVector, self.torqueVector = \
+                vrep.simxReadForceSensor(self.clientID, self.force_sensor_handle, vrep.simx_opmode_buffer)
+        self.errorCode, self.position = \
+            vrep.simxGetObjectPosition(self.clientID, self.force_sensor_handle, self.target_handle,
+                                       vrep.simx_opmode_streaming)
+        while self.errorCode:
+            self.errorCode, self.position = vrep.simxGetObjectPosition(self.clientID, self.force_sensor_handle,
+                                                                       self.target_handle,
+                                                                       vrep.simx_opmode_buffer)
+        print("Init force sensor: IRB140_connection")
+        print("Init force:    ", self.forceVector)
+        print("Init torque:   ", self.torqueVector)
+        print("Init position: ", self.position)
 
-        # Get hole position info
+        '''Get hole position info'''
         self.errorCode, self.hole_handle = vrep.simxGetObjectHandle(self.clientID, 'Hole', vrep.simx_opmode_blocking)
         self.errorCode, self.init_position = vrep.simxGetObjectPosition(self.clientID, self.hole_handle, -1,
                                                                         vrep.simx_opmode_streaming)
@@ -99,8 +96,10 @@ class ArmEnv(object):
         while self.errorCode:
             self.errorCode, self.init_orientation = vrep.simxGetObjectOrientation(self.clientID, self.hole_handle, -1,
                                                                                   vrep.simx_opmode_buffer)
-        print("init position of hole", self.init_position, self.init_orientation)
+        print("\nInit position of hole:    ", self.init_position)
+        print("Init orientation of hole: ", self.init_orientation)
 
+        '''Set up robot'''
         vrep.simxFinish(-1)
         self.clientID = vrep.simxStart('127.0.0.1', 19997, True, True, 5000, 5)
         vrep.simxStartSimulation(self.clientID, vrep.simx_opmode_oneshot)
@@ -144,8 +143,8 @@ class ArmEnv(object):
         self.IK['Beta'] = 0  # y
         self.IK['Gamma'] = 0  # z
 
+        print("\nInitialization finished, restarting scene")
         self.reset()
-        # Auxiliary variables
 
     def step(self, action):
         # set FK or IK
@@ -154,7 +153,8 @@ class ArmEnv(object):
         self.errorCode, self.forceState, self.forceVector, self.torqueVector = \
             vrep.simxReadForceSensor(self.clientID, self.force_sensor_handle, vrep.simx_opmode_buffer)
         self.errorCode, self.position = \
-            vrep.simxGetObjectPosition(self.clientID, self.force_sensor_handle, self.target_handle, vrep.simx_opmode_buffer)
+            vrep.simxGetObjectPosition(self.clientID, self.force_sensor_handle, self.target_handle,
+                                       vrep.simx_opmode_buffer)
 
         # calculations
         # adjust action to usable motion
@@ -226,35 +226,29 @@ class ArmEnv(object):
         # safety check
         safe = cal.safetycheck(self.state)
 
-        return self.code_state(self.state), self.state, r, done, safe
+        return cal.code_state(self.state), self.state, r, done, safe
 
     def reset(self):
-
-        '''Need to try if this can be removed'''
-        # read force sensor
-        self.errorCode, self.forceState, self.forceVector, self.torqueVector = \
-            vrep.simxReadForceSensor(self.clientID, self.force_sensor_handle, vrep.simx_opmode_buffer)
-        self.errorCode, self.position = \
-            vrep.simxGetObjectPosition(self.clientID, self.force_sensor_handle, self.target_handle, vrep.simx_opmode_buffer)
-
-        # restart scene
+        '''restart scene'''
         vrep.simxStopSimulation(self.clientID, vrep.simx_opmode_oneshot)
         time.sleep(1)  # must wait until stop command is finished
         vrep.simxFinish(-1)  # end all communications
         vrep.c_Synchronous(self.clientID, True)
         self.clientID = vrep.simxStart('127.0.0.1', 19997, True, True, 5000, 5)  # restart communication to the server
         vrep.simxStartSimulation(self.clientID, vrep.simx_opmode_oneshot)  # start simulation
-        # Setup the force sensor
+
+        '''Setup the force sensor'''
         self.errorCode, self.force_sensor_handle = vrep.simxGetObjectHandle(self.clientID, 'IRB140_connection',
                                                                             vrep.simx_opmode_blocking)
         self.errorCode, self.forceState, self.forceVector, self.torqueVector = \
             vrep.simxReadForceSensor(self.clientID, self.force_sensor_handle, vrep.simx_opmode_streaming)
         self.errorCode, self.position = \
-            vrep.simxGetObjectPosition(self.clientID, self.force_sensor_handle, self.target_handle, vrep.simx_opmode_streaming)
-        print("***********************scene rested***********************")
+            vrep.simxGetObjectPosition(self.clientID, self.force_sensor_handle, self.target_handle,
+                                       vrep.simx_opmode_streaming)
+        print("*******************************scene rested*******************************")
         vrep.simxSetIntegerSignal(self.clientID, "Apimode", 1, vrep.simx_opmode_oneshot)
 
-        # set random hole position
+        '''set random hole position'''
         new_position = self.init_position.copy()
         new_orientation = self.init_orientation.copy()
         new_position[0] += (np.random.rand(1) - 0.5) * 0.002
@@ -265,8 +259,11 @@ class ArmEnv(object):
         new_orientation[2] += (np.random.rand(1) - 0.5) * 0.04
         vrep.simxSetObjectPosition(self.clientID, self.hole_handle, -1, new_position, vrep.simx_opmode_oneshot)
         vrep.simxSetObjectOrientation(self.clientID, self.hole_handle, -1, new_orientation, vrep.simx_opmode_oneshot)
+        print("Repositioned hole")
+        print("Current position:    ", new_position)
+        print("Current orientation: ", new_orientation)
 
-        # reset signals
+        '''reset signals'''
         if self.movementMode:  # in IK mode
             self.IK['Pos_x'] = 0
             self.IK['Pos_y'] = 0
@@ -307,32 +304,27 @@ class ArmEnv(object):
             vrep.simxSetFloatSignal(self.clientID, "Joint6",
                                     (self.FK['Joint6'] * np.pi / 180 - self.Joints[5][0]) / self.Joints[5][1] * 1000,
                                     vrep.simx_opmode_oneshot)
-        # state
+
+        '''state'''
         # wait for the environment to stabilize
         time.sleep(0.5)
         # read force sensor
         self.errorCode, self.forceState, self.forceVector, self.torqueVector = \
             vrep.simxReadForceSensor(self.clientID, self.force_sensor_handle, vrep.simx_opmode_buffer)
         self.errorCode, self.position = \
-            vrep.simxGetObjectPosition(self.clientID, self.force_sensor_handle, self.target_handle, vrep.simx_opmode_buffer)
+            vrep.simxGetObjectPosition(self.clientID, self.force_sensor_handle, self.target_handle,
+                                       vrep.simx_opmode_buffer)
         self.init_state = np.concatenate((self.position, self.forceVector, self.torqueVector))
-        print('initial state :::::', self.init_state)
+        print('initial state:')
+        print("State 0-3", self.init_state[0:3])
+        print("State 3-6", self.init_state[3:6])
+        print("State 6-9", self.init_state[6:9])
         done = False
-        return self.code_state(self.init_state), self.init_state, done
+        return cal.code_state(self.init_state), self.init_state, done
 
     @staticmethod
     def sample_action():
         return np.random.rand(6) - 0.5
-
-    """ normalize state """
-    def code_state(self, current_state):
-        state = cp.deepcopy(current_state)
-
-        """normalize the state"""
-        scale = 1
-        final_state = state / scale
-
-        return final_state
 
 
 # input random action to the robot
@@ -340,6 +332,7 @@ if __name__ == '__main__':
     env = ArmEnv()
     while True:
         for i in range(30):
-            a = env.sample_action()
+            a = [(0, 0, 0, 0, 0, 0), ""]
+            a[0] = env.sample_action()
             env.step(a)
         env.reset()
