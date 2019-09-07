@@ -44,7 +44,7 @@ def train():
               nb_epochs=nb_epochs,
               nb_epoch_cycles=nb_epoch_cycles,
               nb_train_steps=60,
-              b_rollout_steps=nb_rollout_steps,
+              nb_rollout_steps=nb_rollout_steps,
               data_path_reward=data_path_reward,
               data_path_steps=data_path_steps,
               data_path_states=data_path_states,

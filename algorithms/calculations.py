@@ -5,7 +5,7 @@ from algorithms.pd.PD import PD
 pd = PD()
 
 def reword(s, timer):
-    r = -(abs(s[3]) + abs(s[4]) + abs(s[5]) + abs(s[6]) + abs(s[7]) + abs(s[8]))
+    r = -(abs(s[0]) + abs(s[1]) + abs(s[2])) * 10
     if abs(s[0]) < 0.001 and abs(s[1]) < 0.001 and abs(s[2]) < 0.001:
         done = True
         r += (200 - timer)
@@ -41,8 +41,11 @@ def code_state(current_state):
     state = cp.deepcopy(current_state)
 
     """normalize the state"""
-    scale = 0.1
-    final_state = state / scale
+    position_scale = 0.1
+    torque_scale = 0.01
+    final_state = state
+    final_state[0:3] /= position_scale
+    final_state[6:9] /= torque_scale
 
     '''Add Threshold'''
 
