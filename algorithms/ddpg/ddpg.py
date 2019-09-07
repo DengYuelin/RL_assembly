@@ -26,6 +26,7 @@ def learn(network,
           data_path_states="",
           data_path_times="",
           model_path="",
+          model_name="",
           restore=False,
           seed=None,
           nb_epochs=5,   # with default settings, perform 1M steps total
@@ -201,7 +202,7 @@ def learn(network,
         # np.save(data_path + 'train_times_' + "DDPG" + '_' + file_name + "_" + noise_type, epochs_times)
 
     # # agent save
-    agent.store(model_path)
+    agent.store(model_path + model_name)
 
 
 if __name__ == '__main__':

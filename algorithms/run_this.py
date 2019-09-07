@@ -24,28 +24,14 @@ file_name = '_epochs_' + str(nb_epochs)\
             + "_episodes_" + str(nb_epoch_cycles) + \
             "_rollout_steps_" + str(nb_rollout_steps)
 
-data_path_reward = data_path + algorithm_name + file_name + 'reward'
-data_path_steps = data_path + algorithm_name + file_name + 'steps'
-data_path_states = data_path + algorithm_name + file_name + 'states'
-data_path_times = data_path + algorithm_name + file_name + 'times'
+data_path_reward = data_path + algorithm_name + "/" + file_name + 'reward'
+data_path_steps = data_path + algorithm_name + "/" + file_name + 'steps'
+data_path_states = data_path + algorithm_name + "/" + file_name + 'states'
+data_path_times = data_path + algorithm_name + "/" + file_name + 'times'
 
 data_path_model = model_path + algorithm_name + file_name + 'model'
 
 steps = []
-
-
-def runpd():
-    for i in range(MAX_EPISODES):
-        s = env.reset()
-        ep_r = 0.
-        for j in range(MAX_EP_STEPS):
-
-            a = pd.cal(s, np.array([0, 0, -4, 0, 0]))
-            s, r, done, safe = env.step(a)
-            if done or j == MAX_EP_STEPS - 1 or safe is False:
-                print('Ep: %i | %s | %s | step: %i' % (
-                    i, '---' if not done else 'done', 'unsafe' if not safe else 'safe', j))
-                break
 
 
 def train():
@@ -64,6 +50,7 @@ def train():
               data_path_states=data_path_states,
               data_path_times=data_path_times,
               model_path=data_path_model,
+              model_name=''
               )
 
     if algorithm_name == 'pd':
