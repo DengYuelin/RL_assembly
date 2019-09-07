@@ -1,7 +1,7 @@
 # Setting according to the defintion of problem
 import numpy as np
 import copy as cp
-from .PD import PD
+from algorithms.pd.PD import PD
 pd = PD()
 
 def reword(s, timer):

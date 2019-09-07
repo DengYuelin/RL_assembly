@@ -1,8 +1,7 @@
 from envs.vrepenv import ArmEnv
-from algorithms.PD import PD
+from algorithms.pd.PD import PD
 from algorithms.ddpg.ddpg import learn
 import numpy as np
-import time
 
 MAX_EPISODES = 900
 MAX_EP_STEPS = 200
