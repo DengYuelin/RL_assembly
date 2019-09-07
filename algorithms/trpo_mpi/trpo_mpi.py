@@ -1,16 +1,16 @@
-from baselines.common import explained_variance, zipsame, dataset
-from baselines import logger
-import baselines.common.tf_util as U
+from algorithms.common import explained_variance, zipsame, dataset
+from algorithms import logger
+import algorithms.common.tf_util as U
 import tensorflow as tf, numpy as np
 import time
-from baselines.common import colorize
+from algorithms.common import colorize
 from mpi4py import MPI
 from collections import deque
-from baselines.common import set_global_seeds
-from baselines.common.mpi_adam import MpiAdam
-from baselines.common.cg import cg
-from baselines.common.input import observation_placeholder
-from baselines.common.policies import build_policy
+from algorithms.common import set_global_seeds
+from algorithms.common.mpi_adam import MpiAdam
+from algorithms.common.cg import cg
+from algorithms.common.input import observation_placeholder
+from algorithms.common.policies import build_policy
 from contextlib import contextmanager
 
 
@@ -114,7 +114,7 @@ def learn(*,
                             or function that takes input placeholder and returns tuple (output, None) for feedforward nets
                             or (output, (state_placeholder, state_output, mask_placeholder)) for recurrent nets
 
-    env                     environment (one of the gym environments or wrapped via baselines.common.vec_env.VecEnv-type class
+    env                     environment (one of the gym environments or wrapped via algorithms.common.vec_env.VecEnv-type class
 
     timesteps_per_batch     timesteps per gradient estimation batch
 
