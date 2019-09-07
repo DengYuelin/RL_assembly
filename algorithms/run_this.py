@@ -10,7 +10,7 @@ ON_TRAIN = True
 # set env
 env = ArmEnv()
 
-# ================================================================
+# parameters
 algorithm_name = 'ddpg'
 data_path = '../Data/'
 model_path = '../model/'
@@ -49,28 +49,16 @@ def runpd():
 
 
 def train():
-    # start training
-    learn(network='mlp',
-          env=env,
-          data_path=data_path,
-          noise_type='normal_0.2',
-          file_name=file_name,
-          model_path=model_path,
-          restore=False,
-          nb_epochs=1,
-          nb_epoch_cycles=10,
-          nb_train_steps=60,
-          nb_rollout_steps=200)
 
     if algorithm_name == 'ddpg':
         learn(network='mlp',
               env=env,
               noise_type='normal_0.2',
               restore=False,
-              nb_epochs=1,
-              nb_epoch_cycles=10,
+              nb_epochs=nb_epochs,
+              nb_epoch_cycles=nb_epoch_cycles,
               nb_train_steps=60,
-              nb_rollout_steps=200,
+              b_rollout_steps=nb_rollout_steps,
               data_path_reward=data_path_reward,
               data_path_steps=data_path_steps,
               data_path_states=data_path_states,
@@ -78,10 +66,20 @@ def train():
               model_path=data_path_model,
               )
 
+    if algorithm_name == 'pd':
+        learn(
+            controller=PD,
+            env=env,
+            nb_epochs=nb_epochs,  # with default settings, perform 1M steps total
+            nb_epoch_cycles=nb_epoch_cycles,
+            nb_rollout_steps=nb_rollout_steps,
+            data_path_reward=data_path_reward,
+            data_path_steps=data_path_steps,
+            data_path_states=data_path_states,
+            data_path_times=data_path_times,
+        )
+
 
 if __name__ == '__main__':
+    train()
 
-    if ON_TRAIN:
-        train()
-    else:
-        runpd()
