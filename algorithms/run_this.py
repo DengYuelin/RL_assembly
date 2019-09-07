@@ -44,9 +44,9 @@ def train():
           model_path=model_path,
           restore=False,
           nb_epochs=1,
-          nb_epoch_cycles=2,
-          nb_train_steps=5,
-          nb_rollout_steps=5)
+          nb_epoch_cycles=10,
+          nb_train_steps=60,
+          nb_rollout_steps=200)
 
 
 if ON_TRAIN:

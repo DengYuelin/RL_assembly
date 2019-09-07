@@ -41,6 +41,12 @@ class ArmEnv(object):
         # self.fc = fuzzy_control(low_output=np.array([0., 0., 0., 0., 0., 0.]),
         #                         high_output=np.array([0.03, 0.03, 0.004, 0.03, 0.03, 0.03]))
 
+        """Enable PD controler"""
+        self.pd = True
+
+        """Timer"""
+        self.timer = 0
+
         '''vrep init session'''
         print('Program started')
         vrep.simxFinish(-1)  # just in case, close all opened connections
@@ -147,6 +153,7 @@ class ArmEnv(object):
         self.reset()
 
     def step(self, action):
+        self.timer += 1
         # set FK or IK
         vrep.simxSetIntegerSignal(self.clientID, "movementMode", self.movementMode, vrep.simx_opmode_oneshot)
         # read force sensor
@@ -155,10 +162,11 @@ class ArmEnv(object):
         self.errorCode, self.position = \
             vrep.simxGetObjectPosition(self.clientID, self.force_sensor_handle, self.target_handle,
                                        vrep.simx_opmode_buffer)
-
+        # state
+        self.state = np.concatenate((self.position, self.forceVector, self.torqueVector))
         # calculations
         # adjust action to usable motion
-        action = cal.actions(action, self.movementMode)
+        action = cal.actions(self.state, action, self.movementMode, self.pd)
 
         # take actions
         if self.movementMode:  # in IK mode
@@ -217,11 +225,9 @@ class ArmEnv(object):
             # time.sleep(0.01)  # wait for action to finish
 
         # print(self.position)
-        # state
-        self.state = np.concatenate((self.position, self.forceVector, self.torqueVector))
 
         # done and reward
-        r, done = cal.reword(self.state)
+        r, done = cal.reword(self.state, self.timer)
 
         # safety check
         safe = cal.safetycheck(self.state)
@@ -264,6 +270,7 @@ class ArmEnv(object):
         print("Current orientation: ", new_orientation)
 
         '''reset signals'''
+        self.timer = 0
         if self.movementMode:  # in IK mode
             self.IK['Pos_x'] = 0
             self.IK['Pos_y'] = 0

@@ -1,24 +1,30 @@
 # Setting according to the defintion of problem
 import numpy as np
 import copy as cp
+from .PD import PD
+pd = PD()
 
-def reword(s):
-    r = -(abs(s[0]) + abs(s[1]) + abs(s[2]))*10
-    if abs(s[0]) < 0.001 and abs(s[1]) < 0.001 and abs(s[2]) < 0.001:
-        r = 1
+def reword(s, timer):
+    r = -(abs(s[3]) + abs(s[4]) + abs(s[5]) + abs(s[6]) + abs(s[7]) + abs(s[8]))
     if abs(s[0]) < 0.001 and abs(s[1]) < 0.001 and abs(s[2]) < 0.001:
         done = True
+        r += (200 - timer)
     else:
         done = False
     return r, done
 
 
 # this function adjust the output of the network in to usable actions
-def actions(a, mode):  # here a ∈ action_bound
-    if mode:
-        a_a = a[0] * 0.001
+def actions(s, a, mode, en_pd):
+    if en_pd:
+        action = pd.cal(s, np.array([0, 0, -4, 0, 0]))
+        action = action + action * a[0]
     else:
-        a_a = a[0] * 0.01
+        action = a[0]
+    if mode:
+        a_a = action * 0.001
+    else:
+        a_a = action * 0.01
     return a_a
 
 
