@@ -21,10 +21,11 @@ import copy as cp
 
 def learn(network,
           env,
-          data_path='',
-          model_path='./model/',
-          model_name='ddpg_none_fuzzy_150',
-          file_name='test',
+          data_path_reward="",
+          data_path_steps="",
+          data_path_states="",
+          data_path_times="",
+          model_path="",
           restore=False,
           seed=None,
           nb_epochs=5,   # with default settings, perform 1M steps total
@@ -189,13 +190,18 @@ def learn(network,
         epochs_states.append(cp.deepcopy(epoch_episode_states))
 
         # # save data
-        np.save(data_path + 'train_reward_' + "DDPG" + '_' + file_name + "_" +noise_type, epochs_rewards)
-        np.save(data_path + 'train_step_' + "DDPG" + '_' + file_name + "_" +noise_type, epochs_steps)
-        np.save(data_path + 'train_states_' + "DDPG" + '_' + file_name + "_" +noise_type, epochs_states)
-        np.save(data_path + 'train_times_' + "DDPG" + '_' + file_name + "_" +noise_type, epochs_times)
+        np.save(data_path_reward, epochs_rewards)
+        np.save(data_path_steps, epochs_steps)
+        np.save(data_path_states, epochs_states)
+        np.save(data_path_times, epochs_times)
+
+        # np.save(data_path + 'train_reward_' + "DDPG" + '_' + file_name + "_" + noise_type, epochs_rewards)
+        # np.save(data_path + 'train_step_' + "DDPG" + '_' + file_name + "_" + noise_type, epochs_steps)
+        # np.save(data_path + 'train_states_' + "DDPG" + '_' + file_name + "_" + noise_type, epochs_states)
+        # np.save(data_path + 'train_times_' + "DDPG" + '_' + file_name + "_" + noise_type, epochs_times)
 
     # # agent save
-    agent.store(model_path + 'train_model_' + "DDPG" + '_' + file_name)
+    agent.store(model_path)
 
 
 if __name__ == '__main__':

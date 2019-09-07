@@ -9,12 +9,27 @@ ON_TRAIN = True
 
 # set env
 env = ArmEnv()
-# set RL method
-pd = PD()
 
-file_name = 'test_run'
-data_path = '../Data/prediction_data/'
-model_path = '../Data/prediction_model/'
+# ================================================================
+algorithm_name = 'ddpg'
+data_path = '../Data/'
+model_path = '../model/'
+
+"""parameters for running"""
+nb_epochs = 5
+nb_epoch_cycles = 100
+nb_rollout_steps = 200
+
+file_name = '_epochs_' + str(nb_epochs)\
+            + "_episodes_" + str(nb_epoch_cycles) + \
+            "_rollout_steps_" + str(nb_rollout_steps)
+
+data_path_reward = data_path + algorithm_name + file_name + 'reward'
+data_path_steps = data_path + algorithm_name + file_name + 'steps'
+data_path_states = data_path + algorithm_name + file_name + 'states'
+data_path_times = data_path + algorithm_name + file_name + 'times'
+
+data_path_model = model_path + algorithm_name + file_name + 'model'
 
 steps = []
 
@@ -47,8 +62,26 @@ def train():
           nb_train_steps=60,
           nb_rollout_steps=200)
 
+    if algorithm_name == 'ddpg':
+        learn(network='mlp',
+              env=env,
+              noise_type='normal_0.2',
+              restore=False,
+              nb_epochs=1,
+              nb_epoch_cycles=10,
+              nb_train_steps=60,
+              nb_rollout_steps=200,
+              data_path_reward=data_path_reward,
+              data_path_steps=data_path_steps,
+              data_path_states=data_path_states,
+              data_path_times=data_path_times,
+              model_path=data_path_model,
+              )
 
-if ON_TRAIN:
-    train()
-else:
-    runpd()
+
+if __name__ == '__main__':
+
+    if ON_TRAIN:
+        train()
+    else:
+        runpd()
