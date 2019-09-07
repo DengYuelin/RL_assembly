@@ -189,10 +189,10 @@ def learn(network,
         epochs_states.append(cp.deepcopy(epoch_episode_states))
 
         # # save data
-        np.save(data_path + 'train_reward_' + "DDPG" + '_' + file_name, epochs_rewards)
-        np.save(data_path + 'train_step_' + "DDPG" + '_' + file_name, epochs_steps)
-        np.save(data_path + 'train_states_' + "DDPG" + '_' + file_name, epochs_states)
-        np.save(data_path + 'train_times_' + "DDPG" + '_' + file_name, epochs_times)
+        np.save(data_path + 'train_reward_' + "DDPG" + '_' + file_name + "_" +noise_type, epochs_rewards)
+        np.save(data_path + 'train_step_' + "DDPG" + '_' + file_name + "_" +noise_type, epochs_steps)
+        np.save(data_path + 'train_states_' + "DDPG" + '_' + file_name + "_" +noise_type, epochs_states)
+        np.save(data_path + 'train_times_' + "DDPG" + '_' + file_name + "_" +noise_type, epochs_times)
 
     # # agent save
     agent.store(model_path + 'train_model_' + "DDPG" + '_' + file_name)
@@ -203,9 +203,9 @@ if __name__ == '__main__':
     """ import environment """
 
     env = ArmEnv()
-    data_path = './prediction_data/'
-    model_path = './prediction_model/'
-    file_name = '_epochs_5_episodes_100_none_fuzzy'
+    data_path = './ddpg_data/'
+    model_path = './ddpg_model/'
+    file_name = '_epochs_5_episodes_100_rollout_steps_200'
 
     learn(network='mlp',
           env=env,
@@ -216,6 +216,6 @@ if __name__ == '__main__':
           restore=False,
           nb_epochs=5,
           nb_epoch_cycles=100,
+          nb_rollout_steps=200,
           nb_train_steps=60,
-          nb_rollout_steps=200
-          )
+)

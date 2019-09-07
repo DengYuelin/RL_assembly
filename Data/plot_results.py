@@ -32,16 +32,25 @@ DQN_LAVBELS = ['Typical DQN', 'VPB_DQN']
 DDPG_LAVBELS = ['Typical DDPG', 'VPB_DDPG']
 
 
-""" Plot reward steps and times """
-def plot(result_path, labels={'', ''}):
+def plot(result_path,
+         x_labels="episodes", y_labels="reward", file_name='', render=True):
+    """ Plot reward steps and times """
+
     plt.figure(figsize=(15, 15), dpi=100)
     plt.title('Search Result')
-    data_result = np.load(result_path)
-    plt.plot(data_result)
-    # plt.ylabel(labels[1])
-    # plt.xlabel(labels[0])
-    plt.legend(YLABEL)
-    plt.show()
+    result_data = np.load(result_path)
+    mean_plot_data = np.mean(result_data, axis=0)
+    std_plot_data = np.mean(result_data, axis=0)
+    plt.plot(mean_plot_data, linewidth=3.75)
+    plt.fill_between(np.arange(len(mean_plot_data)), mean_plot_data - std_plot_data,
+                     mean_plot_data + std_plot_data, alpha=0.3)
+
+    plt.ylabel(y_labels)
+    plt.xlabel(x_labels)
+    # plt.legend(YLABEL)
+    plt.savefig(file_name)
+    if render:
+        plt.show()
 
 
 def plot_comparision_curve(result_paths,
@@ -124,6 +133,7 @@ def plot_comparision_curve_with_variance(result_paths, file_name='', render=Fals
         plt.show()
 
 
-
 if __name__ == "__main__":
-    plot("./prediction_data/train_reward_DDPG_test_run.npy", labels={"x", "y"})
+    data = np.load("./prediction_data/train_reward_DDPG_test_run.npy")
+    print(data)
+    plot("./prediction_data/train_reward_DDPG_test_run.npy", file_name="./prediction_data/reward.pdf")
