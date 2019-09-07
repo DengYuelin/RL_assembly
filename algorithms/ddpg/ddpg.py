@@ -205,7 +205,10 @@ if __name__ == '__main__':
     env = ArmEnv()
     data_path = './ddpg_data/'
     model_path = './ddpg_model/'
-    file_name = '_epochs_5_episodes_100_rollout_steps_200'
+    nb_epochs = 5
+    nb_epoch_cycles = 100
+    nb_rollout_steps = 200
+    file_name = '_epochs_' + str(nb_epochs) + "_episodes_" + str(nb_epoch_cycles) + "_rollout_steps_" + str(nb_rollout_steps)
 
     learn(network='mlp',
           env=env,
@@ -214,8 +217,8 @@ if __name__ == '__main__':
           file_name=file_name,
           model_path=model_path,
           restore=False,
-          nb_epochs=5,
-          nb_epoch_cycles=100,
-          nb_rollout_steps=200,
+          nb_epochs=nb_epochs,
+          nb_epoch_cycles=nb_epoch_cycles,
+          nb_rollout_steps=nb_rollout_steps,
           nb_train_steps=60,
 )
