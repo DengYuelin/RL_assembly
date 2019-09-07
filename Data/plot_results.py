@@ -9,7 +9,6 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
-
 """=================================Plot result====================================="""
 YLABEL = ['Fx(N)', 'Fy(N)', 'Fz(N)', 'Mx(Nm)', 'My(Nm)', 'Mz(Nm)']
 Title = ["X axis force", "Y axis force", "Z axis force",
@@ -39,8 +38,8 @@ def plot(result_path, labels={'', ''}):
     plt.title('Search Result')
     data_result = np.load(result_path)
     plt.plot(data_result)
-    plt.ylabel(labels[1])
-    plt.xlabel(labels[0])
+    # plt.ylabel(labels[1])
+    # plt.xlabel(labels[0])
     plt.legend(YLABEL)
     plt.show()
 
@@ -127,3 +126,4 @@ def plot_comparision_curve_with_variance(result_paths, file_name='', render=Fals
 
 
 if __name__ == "__main__":
+    plot("./prediction_data/train_reward_DDPG_test_run.npy", labels={"x", "y"})
