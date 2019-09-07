@@ -13,7 +13,7 @@ env = ArmEnv()
 # parameters
 algorithm_name = 'ddpg'
 data_path = '../Data/'
-model_path = '../model/'
+model_path = '../model/' + algorithm_name + "/"
 
 """parameters for running"""
 nb_epochs = 5
@@ -29,7 +29,7 @@ data_path_steps = data_path + algorithm_name + "/" + file_name + 'steps'
 data_path_states = data_path + algorithm_name + "/" + file_name + 'states'
 data_path_times = data_path + algorithm_name + "/" + file_name + 'times'
 
-data_path_model = model_path + algorithm_name + file_name + 'model'
+model_name = file_name + 'model'
 
 steps = []
 
@@ -49,8 +49,8 @@ def train():
               data_path_steps=data_path_steps,
               data_path_states=data_path_states,
               data_path_times=data_path_times,
-              model_path=data_path_model,
-              model_name=''
+              model_path=model_path,
+              model_name=model_name,
               )
 
     if algorithm_name == 'pd':
