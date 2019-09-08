@@ -7,7 +7,7 @@ from gym import spaces
 
 class ArmEnv(object):
 
-    def __init__(self, step_max=100, fuzzy=False, add_noise=False):
+    def __init__(self, step_max=100, add_noise=False):
 
         self.observation_dim = 9
         self.action_dim = 6
@@ -22,14 +22,12 @@ class ArmEnv(object):
 
         """ reward """
         self.step_max = step_max
-        self.step_max_pos = 15
+        self.insert_depth = 40
 
         """setting"""
         self.add_noise = add_noise  # or True
-        self.pull_terminal = False
 
         """information for action and state"""
-        self.terminated_state = np.array([30, 30, 30, 2, 2, 2])
         self.action_space = spaces.Box(low=-1, high=1,
                                        shape=(self.action_dim,), dtype=np.float32)
         self.observation_space = spaces.Box(low=-10, high=10,
@@ -57,7 +55,6 @@ class ArmEnv(object):
             exit('Failed connecting to remote API server')
 
         vrep.simxStartSimulation(self.clientID, vrep.simx_opmode_oneshot)
-
         vrep.simxSetIntegerSignal(self.clientID, "Apimode", 1, vrep.simx_opmode_oneshot)  # activate apimode
 
         '''vrep sensor setup'''
@@ -66,6 +63,7 @@ class ArmEnv(object):
                                                                             vrep.simx_opmode_blocking)
         self.errorCode, self.target_handle = vrep.simxGetObjectHandle(self.clientID, 'Target',
                                                                       vrep.simx_opmode_blocking)
+
         self.errorCode, self.forceState, self.forceVector, self.torqueVector = \
             vrep.simxReadForceSensor(self.clientID, self.force_sensor_handle, vrep.simx_opmode_streaming)
         while self.errorCode:
@@ -222,16 +220,17 @@ class ArmEnv(object):
 
         # print(self.position)
 
-        # done and reward
-        r, done = cal.reword(self.state, self.timer)
-
         # safety check
         safe = cal.safetycheck(self.state)
+
+        # done and reward, give
+        r, done = cal.reword(self.state, self.timer)
 
         return cal.code_state(self.state), self.state, r, done, safe
 
     def reset(self):
         '''restart scene'''
+
         vrep.simxStopSimulation(self.clientID, vrep.simx_opmode_oneshot)
         time.sleep(1)  # must wait until stop command is finished
         vrep.simxFinish(-1)  # end all communications
@@ -247,6 +246,7 @@ class ArmEnv(object):
         self.errorCode, self.position = \
             vrep.simxGetObjectPosition(self.clientID, self.force_sensor_handle, self.target_handle,
                                        vrep.simx_opmode_streaming)
+
         print("*******************************scene rested*******************************")
         vrep.simxSetIntegerSignal(self.clientID, "Apimode", 1, vrep.simx_opmode_oneshot)
 
@@ -261,12 +261,14 @@ class ArmEnv(object):
         new_orientation[2] += (np.random.rand(1) - 0.5) * 0.04
         vrep.simxSetObjectPosition(self.clientID, self.hole_handle, -1, new_position, vrep.simx_opmode_oneshot)
         vrep.simxSetObjectOrientation(self.clientID, self.hole_handle, -1, new_orientation, vrep.simx_opmode_oneshot)
+
         print("Repositioned hole")
         print("Current position:    ", new_position)
         print("Current orientation: ", new_orientation)
 
         '''reset signals'''
         self.timer = 0
+
         if self.movementMode:  # in IK mode
             self.IK['Pos_x'] = 0
             self.IK['Pos_y'] = 0
@@ -288,6 +290,7 @@ class ArmEnv(object):
             self.FK['Joint4'] = 0
             self.FK['Joint5'] = -90
             self.FK['Joint6'] = 0
+
             # send signal
             vrep.simxSetFloatSignal(self.clientID, "Joint1",
                                     (self.FK['Joint1'] * np.pi / 180 - self.Joints[0][0]) / self.Joints[0][1] * 1000,
@@ -323,6 +326,7 @@ class ArmEnv(object):
         print("State 3-6", self.init_state[3:6])
         print("State 6-9", self.init_state[6:9])
         done = False
+
         return cal.code_state(self.init_state), self.init_state, done
 
     @staticmethod
