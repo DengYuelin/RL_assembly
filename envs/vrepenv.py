@@ -19,12 +19,10 @@ class ArmEnv(object):
         """ action """
         self.action_high_bound = 1
         self.action = np.zeros(self.action_dim)
-        self.fuzzy_control = fuzzy
 
         """ reward """
         self.step_max = step_max
         self.step_max_pos = 15
-        self.reward = 1.
 
         """setting"""
         self.add_noise = add_noise  # or True
@@ -36,10 +34,6 @@ class ArmEnv(object):
                                        shape=(self.action_dim,), dtype=np.float32)
         self.observation_space = spaces.Box(low=-10, high=10,
                                             shape=(self.observation_dim,), dtype=np.float32)
-
-        """fuzzy parameters"""
-        # self.fc = fuzzy_control(low_output=np.array([0., 0., 0., 0., 0., 0.]),
-        #                         high_output=np.array([0.03, 0.03, 0.004, 0.03, 0.03, 0.03]))
 
         """Enable PD controler"""
         self.pd = True
@@ -109,6 +103,7 @@ class ArmEnv(object):
         vrep.simxFinish(-1)
         self.clientID = vrep.simxStart('127.0.0.1', 19997, True, True, 5000, 5)
         vrep.simxStartSimulation(self.clientID, vrep.simx_opmode_oneshot)
+
         # Get Joint data
         self.Joints = np.zeros((6, 2))
         self.Joint_boundary = np.zeros((6, 2))
@@ -260,7 +255,7 @@ class ArmEnv(object):
         new_orientation = self.init_orientation.copy()
         new_position[0] += (np.random.rand(1) - 0.5) * 0.002
         new_position[1] += (np.random.rand(1) - 0.5) * 0.002
-        new_position[0] += 0
+        new_position[2] += 0
         new_orientation[0] += (np.random.rand(1) - 0.5) * 0.04
         new_orientation[1] += (np.random.rand(1) - 0.5) * 0.04
         new_orientation[2] += (np.random.rand(1) - 0.5) * 0.04

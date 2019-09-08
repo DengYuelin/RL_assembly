@@ -18,20 +18,23 @@ def reword(s, timer):
 def reward_step(state, safe_or_not, step_num):
     """ get reward at each step"""
     done = False
+
     # the target depth in z depth
-    set_insert_goal_pos =
-    step_max =
+    set_insert_goal_depth = 40
+    step_max = 200
     force = state[:6]
+
     if safe_or_not is False:
         print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
         print('Max_force_moment:', force)
-        reward = -1 + state[8]/set_insert_goal_pos
+        reward = -1 + (set_insert_goal_depth - state[2])/set_insert_goal_depth
         print("-------------------------------- The force is too large!!! -----------------------------")
     else:
         """consider force and moment"""
         reward = -0.1
 
-    if state[8] < set_insert_goal_pos:
+    # insert complete
+    if (set_insert_goal_depth - state[2]) > set_insert_goal_depth:
         print("+++++++++++++++++++++++++++++ The Assembly Phase Finished!!! ++++++++++++++++++++++++++++")
         reward = 1 - step_num / step_max
         done = True
