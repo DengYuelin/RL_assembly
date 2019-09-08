@@ -186,6 +186,7 @@ class ArmEnv(object):
             vrep.simxSetFloatSignal(self.clientID, "Beta", self.IK['Beta'], vrep.simx_opmode_oneshot)
             vrep.simxSetFloatSignal(self.clientID, "Gamma", self.IK['Gamma'], vrep.simx_opmode_oneshot)
             time.sleep(0.1)  # wait for action to finish
+
         else:  # in FK mode
             # do action
             self.FK['Joint1'] += action[0]

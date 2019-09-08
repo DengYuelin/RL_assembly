@@ -4,6 +4,7 @@ import copy as cp
 from algorithms.pd.PD import PD
 pd = PD()
 
+
 def reword(s, timer):
     r = -(abs(s[0]) + abs(s[1]) + abs(s[2])) * 10
     if abs(s[0]) < 0.001 and abs(s[1]) < 0.001 and abs(s[2]) < 0.001:
@@ -12,6 +13,30 @@ def reword(s, timer):
     else:
         done = False
     return r, done
+
+
+def reward_step(state, safe_or_not, step_num):
+    """ get reward at each step"""
+    done = False
+    # the target depth in z depth
+    set_insert_goal_pos =
+    step_max =
+    force = state[:6]
+    if safe_or_not is False:
+        print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+        print('Max_force_moment:', force)
+        reward = -1 + state[8]/set_insert_goal_pos
+        print("-------------------------------- The force is too large!!! -----------------------------")
+    else:
+        """consider force and moment"""
+        reward = -0.1
+
+    if state[8] < set_insert_goal_pos:
+        print("+++++++++++++++++++++++++++++ The Assembly Phase Finished!!! ++++++++++++++++++++++++++++")
+        reward = 1 - step_num / step_max
+        done = True
+
+    return reward, done
 
 
 # this function adjust the output of the network in to usable actions
@@ -36,6 +61,7 @@ def safetycheck(s):
         return False
     else:
         return True
+
 
 def code_state(current_state):
     state = cp.deepcopy(current_state)
