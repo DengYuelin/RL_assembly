@@ -20,21 +20,23 @@ def reward_step(state, safe_or_not, step_num):
     done = False
 
     # the target depth in z depth
-    set_insert_goal_depth = 40
+    set_insert_goal_depth = 0.035
+    set_peg_height = 0.04
     step_max = 200
     force = state[:6]
+    print(state[2])
 
     if safe_or_not is False:
         print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
         print('Max_force_moment:', force)
-        reward = -1 + (set_insert_goal_depth - state[2])/set_insert_goal_depth
+        reward = -1 + (set_peg_height - state[2])/set_insert_goal_depth
         print("-------------------------------- The force is too large!!! -----------------------------")
     else:
         """consider force and moment"""
         reward = -0.1
 
     # insert complete
-    if (set_insert_goal_depth - state[2]) > set_insert_goal_depth:
+    if (set_peg_height - state[2]) > set_insert_goal_depth:
         print("+++++++++++++++++++++++++++++ The Assembly Phase Finished!!! ++++++++++++++++++++++++++++")
         reward = 1 - step_num / step_max
         done = True

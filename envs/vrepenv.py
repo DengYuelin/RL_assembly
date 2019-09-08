@@ -222,11 +222,10 @@ class ArmEnv(object):
 
         # print(self.position)
 
-        # done and reward
-        r, done = cal.reword(self.state, self.timer)
-
         # safety check
         safe = cal.safetycheck(self.state)
+        # done and reward
+        r, done = cal.reward_step(self.state, safe, self.timer)
 
         return cal.code_state(self.state), self.state, r, done, safe
 
