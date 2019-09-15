@@ -2,8 +2,8 @@ from copy import copy
 from functools import reduce
 
 import numpy as np
-import tensorflow.compat.v1 as tf
-tf.disable_eager_execution()
+import tensorflow as tf
+# tf.disable_eager_execution()
 # import tensorflow.contrib as tc
 
 from algorithms import logger

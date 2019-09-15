@@ -1,5 +1,5 @@
 from mpi4py import MPI
-import tensorflow.compat.v1 as tf, algorithms.common.tf_util as U, numpy as np
+import tensorflow as tf, algorithms.common.tf_util as U, numpy as np
 
 
 class RunningMeanStd(object):
