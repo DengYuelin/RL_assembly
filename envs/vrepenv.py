@@ -170,6 +170,7 @@ class ArmEnv(object):
         self.__execute_action(action)
 
         self.__get_state()
+        print(self.state)
 
         # safety check
         safe = cal.safetycheck(self.state)
@@ -197,6 +198,10 @@ class ArmEnv(object):
         self.errorCode, self.position = \
             vrep.simxGetObjectPosition(self.clientID, self.force_sensor_handle, self.target_handle,
                                        vrep.simx_opmode_streaming)
+        self.errorCode, self.orientation = \
+            vrep.simxGetObjectOrientation(self.clientID, self.force_sensor_handle, -1,
+                                          vrep.simx_opmode_streaming)
+
 
         print("*******************************scene rested*******************************")
         vrep.simxSetIntegerSignal(self.clientID, "Apimode", 1, vrep.simx_opmode_oneshot)
