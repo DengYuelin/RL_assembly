@@ -9,7 +9,7 @@ class ArmEnv(object):
 
     def __init__(self, step_max=100, add_noise=False):
 
-        self.observation_dim = 9
+        self.observation_dim = 12
         self.action_dim = 6
 
         """ state """
@@ -160,82 +160,16 @@ class ArmEnv(object):
 
     def step(self, action):
         self.timer += 1
-        # set FK or IK
-        vrep.simxSetIntegerSignal(self.clientID, "movementMode", self.movementMode, vrep.simx_opmode_oneshot)
-        # read force sensor
-        self.errorCode, self.forceState, self.forceVector, self.torqueVector = \
-            vrep.simxReadForceSensor(self.clientID, self.force_sensor_handle, vrep.simx_opmode_buffer)
-        self.errorCode, self.position = \
-            vrep.simxGetObjectPosition(self.clientID, self.force_sensor_handle, self.target_handle,
-                                       vrep.simx_opmode_buffer)
-        # state
-        if self.observation_dim == 9:
-            self.state = np.concatenate((self.position, self.forceVector, self.torqueVector))
-        elif self.observation_dim == 12:
-            self.state = np.concatenate((self.position, self.forceVector, self.torqueVector, self.orientation))
-        # calculations
+        # read state
+        self.__get_state()
+
         # adjust action to usable motion
         action = cal.actions(self.state, action, self.movementMode, self.pd)
-        print(action)
 
         # take actions
-        if self.movementMode:  # in IK mode
-            # do action
-            self.IK['Pos_x'] += action[0]
-            self.IK['Pos_y'] += action[1]
-            self.IK['Pos_z'] += action[2]
-            self.IK['Alpha'] += action[4]
-            self.IK['Beta'] += action[3]
-            self.IK['Gamma'] += action[5]
+        self.__execute_action(action)
 
-            # send signal
-            vrep.simxSetFloatSignal(self.clientID, "pos_X", self.IK['Pos_x'], vrep.simx_opmode_oneshot)
-            vrep.simxSetFloatSignal(self.clientID, "pos_Y", self.IK['Pos_y'], vrep.simx_opmode_oneshot)
-            vrep.simxSetFloatSignal(self.clientID, "pos_Z", self.IK['Pos_z'], vrep.simx_opmode_oneshot)
-            vrep.simxSetFloatSignal(self.clientID, "Alpha", self.IK['Alpha'], vrep.simx_opmode_oneshot)
-            vrep.simxSetFloatSignal(self.clientID, "Beta", self.IK['Beta'], vrep.simx_opmode_oneshot)
-            vrep.simxSetFloatSignal(self.clientID, "Gamma", self.IK['Gamma'], vrep.simx_opmode_oneshot)
-            time.sleep(0.1)  # wait for action to finish
-
-        else:  # in FK mode
-            # do action
-            self.FK['Joint1'] += action[0]
-            self.FK['Joint2'] += action[1]
-            self.FK['Joint3'] += action[2]
-            self.FK['Joint4'] += action[3]
-            self.FK['Joint5'] += action[4]
-            self.FK['Joint6'] += action[5]
-
-            # boundary
-            self.FK['Joint1'] = np.clip(self.FK['Joint1'], *self.Joint_boundary[0])
-            self.FK['Joint2'] = np.clip(self.FK['Joint2'], *self.Joint_boundary[1])
-            self.FK['Joint3'] = np.clip(self.FK['Joint3'], *self.Joint_boundary[2])
-            self.FK['Joint4'] = np.clip(self.FK['Joint4'], *self.Joint_boundary[3])
-            self.FK['Joint5'] = np.clip(self.FK['Joint5'], *self.Joint_boundary[4])
-            self.FK['Joint6'] = np.clip(self.FK['Joint6'], *self.Joint_boundary[5])
-
-            # send signal
-            vrep.simxSetFloatSignal(self.clientID, "Joint1",
-                                    (self.FK['Joint1'] * np.pi / 180 - self.Joints[0][0]) / self.Joints[0][1] * 1000,
-                                    vrep.simx_opmode_oneshot)
-            vrep.simxSetFloatSignal(self.clientID, "Joint2",
-                                    (self.FK['Joint2'] * np.pi / 180 - self.Joints[1][0]) / self.Joints[1][1] * 1000,
-                                    vrep.simx_opmode_oneshot)
-            vrep.simxSetFloatSignal(self.clientID, "Joint3",
-                                    (self.FK['Joint3'] * np.pi / 180 - self.Joints[2][0]) / self.Joints[2][1] * 1000,
-                                    vrep.simx_opmode_oneshot)
-            vrep.simxSetFloatSignal(self.clientID, "Joint4",
-                                    (self.FK['Joint4'] * np.pi / 180 - self.Joints[3][0]) / self.Joints[3][1] * 1000,
-                                    vrep.simx_opmode_oneshot)
-            vrep.simxSetFloatSignal(self.clientID, "Joint5",
-                                    (self.FK['Joint5'] * np.pi / 180 - self.Joints[4][0]) / self.Joints[4][1] * 1000,
-                                    vrep.simx_opmode_oneshot)
-            vrep.simxSetFloatSignal(self.clientID, "Joint6",
-                                    (self.FK['Joint6'] * np.pi / 180 - self.Joints[5][0]) / self.Joints[5][1] * 1000,
-                                    vrep.simx_opmode_oneshot)
-            # time.sleep(0.01)  # wait for action to finish
-
-        # print(self.position)
+        self.__get_state()
 
         # safety check
         safe = cal.safetycheck(self.state)
@@ -246,6 +180,7 @@ class ArmEnv(object):
 
     def reset(self):
         '''restart scene'''
+
 
         vrep.simxStopSimulation(self.clientID, vrep.simx_opmode_oneshot)
         time.sleep(1)  # must wait until stop command is finished
@@ -331,25 +266,100 @@ class ArmEnv(object):
         # wait for the environment to stabilize
         time.sleep(0.5)
         # read force sensor
-        self.errorCode, self.forceState, self.forceVector, self.torqueVector = \
-            vrep.simxReadForceSensor(self.clientID, self.force_sensor_handle, vrep.simx_opmode_buffer)
-        self.errorCode, self.position = \
-            vrep.simxGetObjectPosition(self.clientID, self.force_sensor_handle, self.target_handle,
-                                       vrep.simx_opmode_buffer)
-        if self.observation_dim == 9:
-            self.init_state = np.concatenate((self.forceVector, self.torqueVector, self.position))
-        elif self.observation_dim == 12:
-            self.init_state = np.concatenate((self.forceVector, self.torqueVector, self.position, self.orientation))
+        self.init_state = self.__get_state()
+
         print('initial state:')
         print("State 0-3", self.init_state[0:3])
         print("State 3-6", self.init_state[3:6])
         print("State 6-9", self.init_state[6:9])
-        if self.observation_dim == 12:
-            print("State 9-12", self.init_state[9:12])
+        print("State 9-12", self.init_state[9:12])
         done = False
 
         return cal.code_state(self.init_state), self.init_state, done
 
+    def __get_state(self):
+
+        # read force sensor
+        self.errorCode, self.forceState, self.forceVector, self.torqueVector = \
+            vrep.simxReadForceSensor(self.clientID, self.force_sensor_handle, vrep.simx_opmode_buffer)
+
+        # read position
+        self.errorCode, self.position = \
+            vrep.simxGetObjectPosition(self.clientID, self.force_sensor_handle, self.target_handle,
+                                       vrep.simx_opmode_buffer)
+
+        # read orientation
+        self.errorCode, self.orientation = \
+            vrep.simxGetObjectOrientation(self.clientID, self.force_sensor_handle, -1,
+                                       vrep.simx_opmode_buffer)
+
+        # state
+        self.state = np.concatenate((self.position, self.orientation, self.forceVector, self.torqueVector))
+
+        return self.state
+
+
+    def __execute_action(self, action):
+        """ execute action """
+
+        # set FK or IK
+        vrep.simxSetIntegerSignal(self.clientID, "movementMode", self.movementMode, vrep.simx_opmode_oneshot)
+
+        # take actions
+        if self.movementMode:  # in IK mode
+            # do action
+            self.IK['Pos_x'] += action[0]
+            self.IK['Pos_y'] += action[1]
+            self.IK['Pos_z'] += action[2]
+            self.IK['Alpha'] += action[4]
+            self.IK['Beta'] += action[3]
+            self.IK['Gamma'] += action[5]
+
+            # send signal
+            vrep.simxSetFloatSignal(self.clientID, "pos_X", self.IK['Pos_x'], vrep.simx_opmode_oneshot)
+            vrep.simxSetFloatSignal(self.clientID, "pos_Y", self.IK['Pos_y'], vrep.simx_opmode_oneshot)
+            vrep.simxSetFloatSignal(self.clientID, "pos_Z", self.IK['Pos_z'], vrep.simx_opmode_oneshot)
+            vrep.simxSetFloatSignal(self.clientID, "Alpha", self.IK['Alpha'], vrep.simx_opmode_oneshot)
+            vrep.simxSetFloatSignal(self.clientID, "Beta", self.IK['Beta'], vrep.simx_opmode_oneshot)
+            vrep.simxSetFloatSignal(self.clientID, "Gamma", self.IK['Gamma'], vrep.simx_opmode_oneshot)
+            time.sleep(0.1)  # wait for action to finish
+        else:
+            # do action
+            self.FK['Joint1'] += action[0]
+            self.FK['Joint2'] += action[1]
+            self.FK['Joint3'] += action[2]
+            self.FK['Joint4'] += action[3]
+            self.FK['Joint5'] += action[4]
+            self.FK['Joint6'] += action[5]
+
+            # boundary
+            self.FK['Joint1'] = np.clip(self.FK['Joint1'], *self.Joint_boundary[0])
+            self.FK['Joint2'] = np.clip(self.FK['Joint2'], *self.Joint_boundary[1])
+            self.FK['Joint3'] = np.clip(self.FK['Joint3'], *self.Joint_boundary[2])
+            self.FK['Joint4'] = np.clip(self.FK['Joint4'], *self.Joint_boundary[3])
+            self.FK['Joint5'] = np.clip(self.FK['Joint5'], *self.Joint_boundary[4])
+            self.FK['Joint6'] = np.clip(self.FK['Joint6'], *self.Joint_boundary[5])
+
+            # send signal
+            vrep.simxSetFloatSignal(self.clientID, "Joint1",
+                                    (self.FK['Joint1'] * np.pi / 180 - self.Joints[0][0]) / self.Joints[0][1] * 1000,
+                                    vrep.simx_opmode_oneshot)
+            vrep.simxSetFloatSignal(self.clientID, "Joint2",
+                                    (self.FK['Joint2'] * np.pi / 180 - self.Joints[1][0]) / self.Joints[1][1] * 1000,
+                                    vrep.simx_opmode_oneshot)
+            vrep.simxSetFloatSignal(self.clientID, "Joint3",
+                                    (self.FK['Joint3'] * np.pi / 180 - self.Joints[2][0]) / self.Joints[2][1] * 1000,
+                                    vrep.simx_opmode_oneshot)
+            vrep.simxSetFloatSignal(self.clientID, "Joint4",
+                                    (self.FK['Joint4'] * np.pi / 180 - self.Joints[3][0]) / self.Joints[3][1] * 1000,
+                                    vrep.simx_opmode_oneshot)
+            vrep.simxSetFloatSignal(self.clientID, "Joint5",
+                                    (self.FK['Joint5'] * np.pi / 180 - self.Joints[4][0]) / self.Joints[4][1] * 1000,
+                                    vrep.simx_opmode_oneshot)
+            vrep.simxSetFloatSignal(self.clientID, "Joint6",
+                                    (self.FK['Joint6'] * np.pi / 180 - self.Joints[5][0]) / self.Joints[5][1] * 1000,
+                                    vrep.simx_opmode_oneshot)
+            # time.sleep(0.01)  # wait for action to finish
     @staticmethod
     def sample_action():
         return np.random.rand(6) - 0.5
