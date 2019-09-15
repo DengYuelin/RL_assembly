@@ -15,7 +15,7 @@ def reward_step(state, safe_or_not, step_num):
     set_intial_height = 40
     set_insert_goal_depth = 30
     step_max = 200
-    force = state[3:9]
+    force = state[6:12]
 
     if safe_or_not is False:
         print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
@@ -38,7 +38,7 @@ def reward_step(state, safe_or_not, step_num):
 # this function adjust the output of the network in to usable actions
 def actions(s, a, mode, en_pd):
     if en_pd:
-        action = pd.cal(s, np.array([0, 0, -7, 0, 0, 0]))
+        action = pd.cal(s, np.array([0, 0, -9, 0, 0, 0]))
         action = action + action * a[0]
     else:
         action = a[0]
@@ -51,9 +51,9 @@ def actions(s, a, mode, en_pd):
 
 # this function checks if the force and torque extends safety value
 def safetycheck(s):
-    if s[3] >= 10 or s[4]>= 10 or s[5] >= 10:
+    if s[6] >= 10 or s[7]>= 10 or s[8] >= 10:
         return False
-    elif s[6] >= 10 or s[7]>= 10 or s[8] >= 10:
+    elif s[9] >= 10 or s[10]>= 10 or s[11] >= 10:
         return False
     else:
         return True

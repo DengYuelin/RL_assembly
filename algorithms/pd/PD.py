@@ -13,7 +13,7 @@ class PD:
         self.ek_2 = np.array([0, 0, 0, 0, 0, 0])
 
     def cal(self, s, rk):
-        yk = np.array([s[3], s[4], s[5], s[6], s[7], s[8]])
+        yk = np.array([s[6], s[7], s[8], s[9], s[10], s[11]])
         self.ek = rk - yk
         # discrete PD algorithm
         self.uk = self.uk_1 + self.kp * (self.ek - self.ek_1) + self.kd * (self.ek - 2 * self.ek_1 + self.ek_2)
