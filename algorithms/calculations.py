@@ -15,7 +15,7 @@ def reward_step(state, safe_or_not, step_num):
     set_intial_height = 40
     set_insert_goal_depth = 30
     step_max = 200
-    force = state[:6]
+    force = state[3:9]
 
     if safe_or_not is False:
         print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
