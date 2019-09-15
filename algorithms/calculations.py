@@ -12,8 +12,7 @@ def reward_step(state, safe_or_not, step_num):
     done = False
 
     # the target depth in z depth
-    set_intial_height = 40
-    set_insert_goal_depth = 30
+    set_insert_goal_depth = 0.035
     step_max = 200
     force = state[6:12]
 
