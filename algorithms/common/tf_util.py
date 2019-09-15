@@ -1,6 +1,6 @@
 import joblib
 import numpy as np
-import tensorflow as tf  # pylint: ignore-module
+import tensorflow.compat.v1 as tf  # pylint: ignore-module
 import copy
 import os
 import functools

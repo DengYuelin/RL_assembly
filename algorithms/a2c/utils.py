@@ -1,6 +1,6 @@
 import os
 import numpy as np
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 from collections import deque
 
 def sample(logits):
@@ -57,7 +57,7 @@ def conv(x, scope, *, nf, rf, stride, pad='VALID', init_scale=1.0, data_format='
 
 def fc(x, scope, nh, *, init_scale=1.0, init_bias=0.0):
     with tf.variable_scope(scope):
-        nin = x.get_shape()[1].value
+        nin = x.get_shape()[1]
         w = tf.get_variable("w", [nin, nh], initializer=ortho_init(init_scale))
         b = tf.get_variable("b", [nh], initializer=tf.constant_initializer(init_bias))
         return tf.matmul(x, w)+b

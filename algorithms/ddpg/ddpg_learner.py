@@ -2,8 +2,9 @@ from copy import copy
 from functools import reduce
 
 import numpy as np
-import tensorflow as tf
-import tensorflow.contrib as tc
+import tensorflow.compat.v1 as tf
+tf.disable_eager_execution()
+# import tensorflow.contrib as tc
 
 from algorithms import logger
 from algorithms.common.mpi_adam import MpiAdam
@@ -193,10 +194,12 @@ class DDPG(object):
             for var in critic_reg_vars:
                 logger.info('  regularizing: {}'.format(var.name))
             logger.info('  applying l2 regularization with {}'.format(self.critic_l2_reg))
-            critic_reg = tc.layers.apply_regularization(
-                tc.layers.l2_regularizer(self.critic_l2_reg),
-                weights_list=critic_reg_vars
-            )
+            # critic_reg = tc.layers.apply_regularization(
+            #     tc.layers.l2_regularizer(self.critic_l2_reg),
+            #     weights_list=critic_reg_vars
+            critic_reg = self.critic_l2_reg
+            # critic_reg = tf.layers.l2_regularizer(self.critic_l2_reg)
+
             self.critic_loss += critic_reg
         critic_shapes = [var.get_shape().as_list() for var in self.critic.trainable_vars]
         critic_nb_params = sum([reduce(lambda x, y: x * y, shape) for shape in critic_shapes])
