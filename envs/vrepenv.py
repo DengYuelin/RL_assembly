@@ -76,10 +76,16 @@ class ArmEnv(object):
             self.errorCode, self.position = vrep.simxGetObjectPosition(self.clientID, self.force_sensor_handle,
                                                                        self.target_handle,
                                                                        vrep.simx_opmode_buffer)
+        self.errorCode, self.orientation = vrep.simxGetObjectOrientation(self.clientID, self.force_sensor_handle, -1,
+                                                                              vrep.simx_opmode_streaming)
+        while self.errorCode:
+            self.errorCode, self.orientation = vrep.simxGetObjectOrientation(self.clientID, self.force_sensor_handle, -1,
+                                                                                  vrep.simx_opmode_buffer)
         print("Init force sensor: IRB140_connection")
         print("Init force:    ", self.forceVector)
         print("Init torque:   ", self.torqueVector)
         print("Init position: ", self.position)
+        print("Init Orientation", self.orientation)
 
         '''Get hole position info'''
         self.errorCode, self.hole_handle = vrep.simxGetObjectHandle(self.clientID, 'Hole', vrep.simx_opmode_blocking)
@@ -101,6 +107,13 @@ class ArmEnv(object):
         vrep.simxFinish(-1)
         self.clientID = vrep.simxStart('127.0.0.1', 19997, True, True, 5000, 5)
         vrep.simxStartSimulation(self.clientID, vrep.simx_opmode_oneshot)
+
+        # Get peg number
+        self.errorCode, self.peg_number = vrep.simxGetIntegerSignal(self.clientID, 'Peg_number', vrep.simx_opmode_streaming)
+        while self.errorCode:
+            self.errorCode, self.peg_number = vrep.simxGetIntegerSignal(self.clientID, 'Peg_number',
+                                                                        vrep.simx_opmode_buffer)
+        print("Number of peg:", self.peg_number)
 
         # Get Joint data
         self.Joints = np.zeros((6, 2))
@@ -156,10 +169,14 @@ class ArmEnv(object):
             vrep.simxGetObjectPosition(self.clientID, self.force_sensor_handle, self.target_handle,
                                        vrep.simx_opmode_buffer)
         # state
-        self.state = np.concatenate((self.position, self.forceVector, self.torqueVector))
+        if self.observation_dim == 9:
+            self.state = np.concatenate((self.position, self.forceVector, self.torqueVector))
+        elif self.observation_dim == 12:
+            self.state = np.concatenate((self.position, self.forceVector, self.torqueVector, self.orientation))
         # calculations
         # adjust action to usable motion
         action = cal.actions(self.state, action, self.movementMode, self.pd)
+        print(action)
 
         # take actions
         if self.movementMode:  # in IK mode
@@ -224,9 +241,6 @@ class ArmEnv(object):
         safe = cal.safetycheck(self.state)
         # done and reward
         r, done = cal.reward_step(self.state, safe, self.timer)
-
-        # done and reward, give
-        r, done = cal.reword(self.state, self.timer)
 
         return cal.code_state(self.state), self.state, r, done, safe
 
@@ -322,11 +336,16 @@ class ArmEnv(object):
         self.errorCode, self.position = \
             vrep.simxGetObjectPosition(self.clientID, self.force_sensor_handle, self.target_handle,
                                        vrep.simx_opmode_buffer)
-        self.init_state = np.concatenate((self.position, self.forceVector, self.torqueVector))
+        if self.observation_dim == 9:
+            self.init_state = np.concatenate((self.forceVector, self.torqueVector, self.position))
+        elif self.observation_dim == 12:
+            self.init_state = np.concatenate((self.forceVector, self.torqueVector, self.position, self.orientation))
         print('initial state:')
         print("State 0-3", self.init_state[0:3])
         print("State 3-6", self.init_state[3:6])
         print("State 6-9", self.init_state[6:9])
+        if self.observation_dim == 12:
+            print("State 9-12", self.init_state[9:12])
         done = False
 
         return cal.code_state(self.init_state), self.init_state, done
@@ -340,7 +359,7 @@ class ArmEnv(object):
 if __name__ == '__main__':
     env = ArmEnv()
     while True:
-        for i in range(30):
+        for i in range(100):
             a = [(0, 0, 0, 0, 0, 0), ""]
             a[0] = env.sample_action()
             env.step(a)

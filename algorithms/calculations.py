@@ -5,14 +5,6 @@ from algorithms.pd.PD import PD
 pd = PD()
 
 
-def reword(s, timer):
-    r = -(abs(s[0]) + abs(s[1]) + abs(s[2])) * 10
-    if abs(s[0]) < 0.001 and abs(s[1]) < 0.001 and abs(s[2]) < 0.001:
-        done = True
-        r += (200 - timer)
-    else:
-        done = False
-    return r, done
 
 
 def reward_step(state, safe_or_not, step_num):
@@ -46,7 +38,7 @@ def reward_step(state, safe_or_not, step_num):
 # this function adjust the output of the network in to usable actions
 def actions(s, a, mode, en_pd):
     if en_pd:
-        action = pd.cal(s, np.array([0, 0, -4, 0, 0]))
+        action = pd.cal(s, np.array([0, 0, -7, 0, 0, 0]))
         action = action + action * a[0]
     else:
         action = a[0]
