@@ -287,19 +287,26 @@ class ArmEnv(object):
         # read force sensor
         self.errorCode, self.forceState, self.forceVector, self.torqueVector = \
             vrep.simxReadForceSensor(self.clientID, self.force_sensor_handle, vrep.simx_opmode_buffer)
+        round(self.forceVector, 4)
+        round(self.torqueVector, 4)
 
         # read position
         self.errorCode, self.position = \
             vrep.simxGetObjectPosition(self.clientID, self.force_sensor_handle, self.target_handle,
                                        vrep.simx_opmode_buffer)
+        self.position *= 1000
+        round(self.position, 2)
 
         # read orientation
         self.errorCode, self.orientation = \
             vrep.simxGetObjectOrientation(self.clientID, self.force_sensor_handle, -1,
                                        vrep.simx_opmode_buffer)
+        round(self.orientation, 4)
 
         # state
         self.state = np.concatenate((self.position, self.orientation, self.forceVector, self.torqueVector))
+        
+        
 
         return self.state
 
