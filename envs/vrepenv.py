@@ -34,7 +34,7 @@ class ArmEnv(object):
                                             shape=(self.observation_dim,), dtype=np.float32)
 
         """Enable PD controler"""
-        self.pd = True
+        self.pd = False
 
         """Timer"""
         self.timer = 0
@@ -161,7 +161,7 @@ class ArmEnv(object):
     def step(self, action):
         self.timer += 1
         # read state
-        self.__get_state()
+        uncode_state, self.state = self.__get_state()
 
         # adjust action to usable motion
         action = cal.actions(self.state, action, self.movementMode, self.pd)
@@ -169,7 +169,8 @@ class ArmEnv(object):
         # take actions
         self.__execute_action(action)
 
-        self.__get_state()
+        uncode_state, self.state = self.__get_state()
+
         print(self.state)
 
         # safety check
@@ -177,7 +178,7 @@ class ArmEnv(object):
         # done and reward
         r, done = cal.reward_step(self.state, safe, self.timer)
 
-        return cal.code_state(self.state), self.state, r, done, safe
+        return self.state, uncode_state, r, done, safe
 
     def reset(self):
         '''restart scene'''
@@ -271,7 +272,7 @@ class ArmEnv(object):
         # wait for the environment to stabilize
         time.sleep(0.5)
         # read force sensor
-        self.init_state = self.__get_state()
+        uncode_init_state, self.init_state,  = self.__get_state()
 
         print('initial state:')
         print("State 0-3", self.init_state[0:3])
@@ -280,35 +281,30 @@ class ArmEnv(object):
         print("State 9-12", self.init_state[9:12])
         done = False
 
-        return cal.code_state(self.init_state), self.init_state, done
+        return self.init_state, uncode_init_state, done
 
     def __get_state(self):
 
         # read force sensor
         self.errorCode, self.forceState, self.forceVector, self.torqueVector = \
             vrep.simxReadForceSensor(self.clientID, self.force_sensor_handle, vrep.simx_opmode_buffer)
-        round(self.forceVector, 4)
-        round(self.torqueVector, 4)
 
         # read position
         self.errorCode, self.position = \
             vrep.simxGetObjectPosition(self.clientID, self.force_sensor_handle, self.target_handle,
                                        vrep.simx_opmode_buffer)
-        self.position *= 1000
-        round(self.position, 2)
 
         # read orientation
         self.errorCode, self.orientation = \
             vrep.simxGetObjectOrientation(self.clientID, self.force_sensor_handle, -1,
                                        vrep.simx_opmode_buffer)
-        round(self.orientation, 4)
 
         # state
-        self.state = np.concatenate((self.position, self.orientation, self.forceVector, self.torqueVector))
+        state = np.concatenate((self.position, self.orientation, self.forceVector, self.torqueVector))
         
-        
+        code_state = cal.code_state(state)
 
-        return self.state
+        return state, code_state
 
 
     def __execute_action(self, action):

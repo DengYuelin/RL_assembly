@@ -12,7 +12,7 @@ def reward_step(state, safe_or_not, step_num):
     done = False
 
     # the target depth in z depth
-    set_insert_goal_depth = 0.035
+    set_insert_goal_depth = 35
     step_max = 200
     force = state[6:12]
 
@@ -62,11 +62,12 @@ def code_state(current_state):
     state = cp.deepcopy(current_state)
 
     """normalize the state"""
-    position_scale = 0.1
-    torque_scale = 0.01
+    position_scale = 1000
     final_state = state
-    final_state[0:3] /= position_scale
-    final_state[6:9] /= torque_scale
+    final_state[0:3] *= position_scale # m to mm
+    for i in range(12):
+        final_state[i] = round(final_state[i], 4)
+
 
     '''Add Threshold'''
 
