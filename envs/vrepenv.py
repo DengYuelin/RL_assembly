@@ -107,11 +107,10 @@ class ArmEnv(object):
         vrep.simxFinish(-1)
         self.clientID = vrep.simxStart('127.0.0.1', 19997, True, True, 5000, 5)
         vrep.simxStartSimulation(self.clientID, vrep.simx_opmode_oneshot)
-
         # Get peg number
-        self.errorCode, self.peg_number = vrep.simxGetIntegerSignal(self.clientID, 'Peg_number', vrep.simx_opmode_streaming)
+        self.errorCode, self.peg_number = vrep.simxGetIntegerSignal(self.clientID, 'Peg_num', vrep.simx_opmode_streaming)
         while self.errorCode:
-            self.errorCode, self.peg_number = vrep.simxGetIntegerSignal(self.clientID, 'Peg_number',
+            self.errorCode, self.peg_number = vrep.simxGetIntegerSignal(self.clientID, 'Peg_num',
                                                                         vrep.simx_opmode_buffer)
         print("Number of peg:", self.peg_number)
 
