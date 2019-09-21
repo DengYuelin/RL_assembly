@@ -74,3 +74,6 @@ def code_state(current_state):
 
     return final_state
 
+def clear():
+    pd.clear()
+

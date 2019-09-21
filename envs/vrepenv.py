@@ -179,6 +179,7 @@ class ArmEnv(object):
 
     def reset(self):
         '''restart scene'''
+        cal.clear()
 
 
         vrep.simxStopSimulation(self.clientID, vrep.simx_opmode_oneshot)
@@ -267,7 +268,7 @@ class ArmEnv(object):
 
         '''state'''
         # wait for the environment to stabilize
-        time.sleep(0.5)
+        time.sleep(1)
         # read force sensor
         uncode_init_state, self.init_state,  = self.__get_state()
 

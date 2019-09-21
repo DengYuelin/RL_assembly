@@ -26,3 +26,13 @@ class PD:
         for i in range(6):
             action[i] = round(action[i], 4)
         return action
+
+    def clear(self):
+        self.kp = 0.1
+        self.kd = 0.1
+        self.uk = np.array([0, 0, 0, 0, 0, 0])
+        self.uk_1 = np.array([0, 0, 0, 0, 0, 0])
+        self.yk = np.array([0, 0, 0, 0, 0, 0])
+        self.ek = np.array([0, 0, 0, 0, 0, 0])
+        self.ek_1 = np.array([0, 0, 0, 0, 0, 0])
+        self.ek_2 = np.array([0, 0, 0, 0, 0, 0])
