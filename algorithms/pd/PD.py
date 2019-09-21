@@ -23,6 +23,6 @@ class PD:
         self.uk_1 = self.uk
         action = self.uk
         action[0] = - action[0]
-        action[3] = action[3]
-        action[4] = action[4]
+        for i in range(6):
+            action[i] = round(action[i], 4)
         return action

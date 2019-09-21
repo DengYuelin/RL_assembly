@@ -34,7 +34,7 @@ class ArmEnv(object):
                                             shape=(self.observation_dim,), dtype=np.float32)
 
         """Enable PD controler"""
-        self.pd = False
+        self.pd = True
 
         """Timer"""
         self.timer = 0
@@ -169,8 +169,6 @@ class ArmEnv(object):
         self.__execute_action(action)
 
         uncode_state, self.state = self.__get_state()
-
-        print(self.state)
 
         # safety check
         safe = cal.safetycheck(self.state)
@@ -379,5 +377,6 @@ if __name__ == '__main__':
         for i in range(100):
             a = [(0, 0, 0, 0, 0, 0), ""]
             a[0] = env.sample_action()
-            env.step(a)
+            # env.step(a)
+            env.step([(0, 0, 0, 0, 0, 0), ""])
         env.reset()
