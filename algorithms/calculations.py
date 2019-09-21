@@ -24,10 +24,9 @@ def reward_step(state, safe_or_not, step_num):
         print("-------------------------------- The force is too large!!! -----------------------------")
     else:
         """consider force and moment"""
-        reward = -0.1
+        reward = -0.02
 
     # insert complete
-    print(peg_length - state[2])
     if (peg_length - state[2]) > set_insert_goal_depth:
         print("+++++++++++++++++++++++++++++ The Assembly Phase Finished!!! ++++++++++++++++++++++++++++")
         reward = 1 - step_num / step_max
@@ -43,6 +42,8 @@ def actions(s, a, mode, en_pd):
         action = action + action * a[0]
     else:
         action = a[0]
+    for i in range(6):
+        action[i] = round(action[i], 4)
     if mode:
         a_a = action * 0.001
     else:

@@ -174,8 +174,6 @@ class ArmEnv(object):
         safe = cal.safetycheck(self.state)
         # done and reward
         r, done = cal.reward_step(self.state, safe, self.timer)
-        if done:
-            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 
         return self.state, uncode_state, r, done, safe
 
