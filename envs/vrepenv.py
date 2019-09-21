@@ -174,6 +174,8 @@ class ArmEnv(object):
         safe = cal.safetycheck(self.state)
         # done and reward
         r, done = cal.reward_step(self.state, safe, self.timer)
+        if done:
+            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 
         return self.state, uncode_state, r, done, safe
 
@@ -375,7 +377,7 @@ class ArmEnv(object):
 if __name__ == '__main__':
     env = ArmEnv()
     while True:
-        for i in range(100):
+        for i in range(150):
             a = [(0, 0, 0, 0, 0, 0), ""]
             a[0] = env.sample_action()
             # env.step(a)

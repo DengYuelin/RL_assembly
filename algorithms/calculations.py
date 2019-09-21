@@ -12,21 +12,23 @@ def reward_step(state, safe_or_not, step_num):
     done = False
 
     # the target depth in z depth
-    set_insert_goal_depth = 35
+    set_insert_goal_depth = 37
+    peg_length = 40
     step_max = 200
     force = state[6:12]
 
     if safe_or_not is False:
         print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
         print('Max_force_moment:', force)
-        reward = -1 + (set_insert_goal_depth - state[2])/set_insert_goal_depth
+        reward = -1 + (peg_length - state[2])/set_insert_goal_depth
         print("-------------------------------- The force is too large!!! -----------------------------")
     else:
         """consider force and moment"""
         reward = -0.1
 
     # insert complete
-    if (set_insert_goal_depth - state[2]) > set_insert_goal_depth:
+    print(peg_length - state[2])
+    if (peg_length - state[2]) > set_insert_goal_depth:
         print("+++++++++++++++++++++++++++++ The Assembly Phase Finished!!! ++++++++++++++++++++++++++++")
         reward = 1 - step_num / step_max
         done = True
@@ -38,7 +40,6 @@ def reward_step(state, safe_or_not, step_num):
 def actions(s, a, mode, en_pd):
     if en_pd:
         action = pd.cal(s, np.array([0, 0, -4, 0, 0, 0]))
-        print(action)
         action = action + action * a[0]
     else:
         action = a[0]
@@ -73,6 +74,7 @@ def code_state(current_state):
     '''Add Threshold'''
 
     return final_state
+
 
 def clear():
     pd.clear()
