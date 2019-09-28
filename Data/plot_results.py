@@ -135,7 +135,7 @@ def plot_comparision_curve_with_variance(result_paths, file_name='', render=Fals
 
 if __name__ == "__main__":
 
-    data = np.load("./ddpg/_epochs_5_episodes_100_rollout_steps_200states.npy")
+    data = np.load("./ddpg/figures/_epochs_2_episodes_100_rollout_steps_200reword.npy")
     print(data)
     # plot("./ddpg/_epochs_5_episodes_100_rollout_steps_200reward.npy",
     #      file_name="./ddpg/figures/reward.pdf")

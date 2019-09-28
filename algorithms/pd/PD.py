@@ -3,8 +3,8 @@ import numpy as np
 
 class PD:
     def __init__(self):
-        self.kp = 0.1
-        self.kd = 0.1
+        self.kp = 0.01
+        self.kd = 0.01
         self.uk = np.array([0, 0, 0, 0, 0, 0])
         self.uk_1 = np.array([0, 0, 0, 0, 0, 0])
         self.yk = np.array([0, 0, 0, 0, 0, 0])
@@ -22,7 +22,6 @@ class PD:
         self.ek_1 = self.ek
         self.uk_1 = self.uk
         action = self.uk
-        action[0] = - action[0]
         for i in range(6):
             action[i] = round(action[i], 4)
         return action
