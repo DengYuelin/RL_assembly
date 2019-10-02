@@ -3,10 +3,6 @@ from algorithms.pd.PD import PD
 from algorithms.ddpg.ddpg import learn
 import numpy as np
 
-MAX_EPISODES = 900
-MAX_EP_STEPS = 200
-ON_TRAIN = True
-
 # set env
 env = ArmEnv()
 
