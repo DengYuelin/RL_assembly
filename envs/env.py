@@ -121,17 +121,17 @@ class ArmEnv(object):
         # get and enable sensors
         # Fxyz: N, Txyz: N*m
         self.fz_sensor = self.supervisor.getMotor('FZ_SENSOR')
-        self.fz_sensor.enableForceFeedback(16)
+        self.fz_sensor.enableForceFeedback(self.timeStep)
         self.fx_sensor = self.supervisor.getMotor('FX_SENSOR')
-        self.fx_sensor.enableForceFeedback(16)
+        self.fx_sensor.enableForceFeedback(self.timeStep)
         self.fy_sensor = self.supervisor.getMotor('FY_SENSOR')
-        self.fy_sensor.enableForceFeedback(16)
+        self.fy_sensor.enableForceFeedback(self.timeStep)
         self.tx_sensor = self.supervisor.getMotor('TX_SENSOR')
-        self.tx_sensor.enableTorqueFeedback(16)
+        self.tx_sensor.enableTorqueFeedback(self.timeStep)
         self.ty_sensor = self.supervisor.getMotor('TY_SENSOR')
-        self.ty_sensor.enableTorqueFeedback(16)
+        self.ty_sensor.enableTorqueFeedback(self.timeStep)
         self.tz_sensor = self.supervisor.getMotor('TY_SENSOR')
-        self.tz_sensor.enableTorqueFeedback(16)
+        self.tz_sensor.enableTorqueFeedback(self.timeStep)
         self.FZ = self.fz_sensor.getForceFeedback()
         self.FX = self.fx_sensor.getForceFeedback()
         self.FY = self.fy_sensor.getForceFeedback()
@@ -216,7 +216,7 @@ class ArmEnv(object):
             self.supervisor.step(self.timeStep)
 
         for i in range(6):
-            self.motors[i].setVelocity(0.1)
+            self.motors[i].setVelocity(0.07)
 
         '''state'''
         # get
