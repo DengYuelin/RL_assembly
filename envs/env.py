@@ -10,7 +10,6 @@ except ImportError:
 import math
 from controller import Supervisor
 import numpy as np
-import time
 import algorithms.calculations as cal
 from gym import spaces
 
@@ -99,9 +98,9 @@ class ArmEnv(object):
         """Timer"""
         self.timer = 0
 
-        # Initialize the Webots Supervisor.
+        """Initialize the Webots Supervisor"""
         self.supervisor = Supervisor()
-        self.timeStep = int(4 * self.supervisor.getBasicTimeStep())
+        self.timeStep = int(8)
         # TODO: It's there a way to start simulation automatically?
 
         '''enable world devices'''
@@ -151,7 +150,7 @@ class ArmEnv(object):
         self.gamma = 0
 
         """reset world"""
-        # self.reset()
+        self.reset()
         # TODO fix reset bug
 
     def step(self, action):
@@ -177,32 +176,20 @@ class ArmEnv(object):
     def reset(self):
         """restart world"""
         # clear calculations
-        # cal.clear()
-        # reset simulation
-        self.supervisor.simulationReset()
-        time.sleep(0.5)
+        cal.clear()
 
         print("*******************************world rested*******************************")
 
-        # TODO: set random positon for hole
+        # TODO: set random position for hole
 
         '''reset signals'''
         self.timer = 0
-
-        '''read sensor data'''
-        """get force/torque feed back"""
-        self.FZ = self.fz_sensor.getForceFeedback()
-        self.FX = self.fx_sensor.getForceFeedback()
-        self.FY = self.fy_sensor.getForceFeedback()
-        self.TX = self.tx_sensor.getTorqueFeedback()
-        self.TY = self.ty_sensor.getTorqueFeedback()
-        self.TZ = self.tz_sensor.getTorqueFeedback()
 
         "Initial Position of the robot"
         # x/y/z in meters relative to world frame
         self.x = 0.94455 - self.armPosition[0]
         self.y = self.armPosition[2]
-        self.z = 2.255 - self.armPosition[1] - 1
+        self.z = 2.255 - self.armPosition[1]
         # alpha/beta/gamma in rad relative to initial orientation
         self.alpha = 0
         self.beta = 0
@@ -225,10 +212,15 @@ class ArmEnv(object):
         for i in range(6):
             self.motors[i].setVelocity(1.0)
 
+        """wait for robot to move to initial place"""
+        for i in range (20):
+            self.supervisor.step(self.timeStep)
+
+        for i in range(6):
+            self.motors[i].setVelocity(0.1)
+
         '''state'''
-        # wait for the environment to stabilize
-        time.sleep(1)
-        # read force sensor
+        # get
         uncode_init_state, self.init_state, = self.__get_state()
 
         print('initial state:')
@@ -237,6 +229,10 @@ class ArmEnv(object):
         print("State 6-9", self.init_state[6:9])
         print("State 9-12", self.init_state[9:12])
         done = False
+
+        # reset simulation
+        self.supervisor.simulationResetPhysics()
+        # TODO reset failure detection
 
         return self.init_state, uncode_init_state, done
 
@@ -265,11 +261,18 @@ class ArmEnv(object):
         # do action
         self.x += action[0]
         self.y += action[1]
-        # self.z -= action[2]
+        self.z -= action[2]
         self.alpha += action[3]
         self.beta += action[4]
         self.gamma += action[5]
 
+        # bound position
+        self.x = np.clip(self.x, 0.94455 - self.armPosition[0] - 0.02, 0.94455 - self.armPosition[0] + 0.02)
+        self.y = np.clip(self.y, self.armPosition[2] - 0.02, self.armPosition[2] +0.02)
+        self.z = np.clip(self.z, 2.255 - self.armPosition[1] - 0.05, 2.255 - self.armPosition[1] + 0.02)
+        self.alpha = np.clip(self.alpha, -1, 1)
+        self.beta = np.clip(self.beta, -1, 1)
+        self.gamma = np.clip(self.gamma, -1, 1)
 
         # Call "ikpy" to compute the inverse kinematics of the arm.
         # ikpy only compute position
@@ -295,10 +298,10 @@ class ArmEnv(object):
 if __name__ == '__main__':
     env = ArmEnv()
     while True:
-        for i in range(2000):
+        for i in range(200):
             a = env.sample_action()
             # env.step(a)
             _, _, _, done, r =env.step([(0, 0, 0, 0, 0, 0), ""])
-            if done:
-                break
+            # if done:
+            #     break
         env.reset()

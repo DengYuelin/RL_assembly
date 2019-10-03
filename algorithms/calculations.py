@@ -38,13 +38,16 @@ def reward_step(state, safe_or_not, step_num):
 # this function adjust the output of the network in to usable actions
 def actions(s, a, en_pd):
     if en_pd:
-        action = pd.cal(s, np.array([0, 0, 7, 0, 0, 0]))
+        action = pd.cal(s, np.array([0, 0, 4, 0, 0, 0]))
         action = action + action * a[0]
     else:
         action = a[0]
-    action[0] /= 1000
-    action[1] /= 1000
-    action[2] /= 100
+    action[0] /= 10000
+    action[1] /= 10000
+    action[2] /= 1000
+    action[3] /= 1000
+    action[4] /= 1000
+    action[5] /= 1000
     for i in range(6):
         action[i] = round(action[i], 4)
     return action

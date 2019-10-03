@@ -1,4 +1,4 @@
-from envs.vrepenv import ArmEnv
+from envs.env import ArmEnv
 from algorithms.pd.PD import PD
 from algorithms.ddpg.ddpg import learn
 import numpy as np

@@ -9,7 +9,7 @@ import algorithms.common.tf_util as U
 from algorithms import logger
 
 """ import your environment """
-from envs.vrepenv import ArmEnv
+from envs.env import ArmEnv
 
 import algorithms.common.tf_util as U
 
