@@ -12,7 +12,7 @@ def reward_step(state, safe_or_not, step_num):
     done = False
 
     # the target depth in z depth
-    set_insert_goal_depth = 45
+    set_insert_goal_depth = 47
     peg_length = 50
     step_max = 200
     force = state[6:12]
@@ -38,7 +38,7 @@ def reward_step(state, safe_or_not, step_num):
 # this function adjust the output of the network in to usable actions
 def actions(s, a, en_pd):
     if en_pd:
-        action = pd.cal(s, np.array([0, 0, 4, 0, 0, 0]))
+        action = pd.cal(s, np.array([0, 0, 15, 0, 0, 0]))
         action = action + action * a[0]
     else:
         action = a[0]

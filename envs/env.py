@@ -151,7 +151,6 @@ class ArmEnv(object):
 
         """reset world"""
         self.reset()
-        # TODO fix reset bug
 
     def step(self, action):
         self.supervisor.step(self.timeStep)
@@ -269,7 +268,7 @@ class ArmEnv(object):
         # bound position
         self.x = np.clip(self.x, 0.94455 - self.armPosition[0] - 0.02, 0.94455 - self.armPosition[0] + 0.02)
         self.y = np.clip(self.y, self.armPosition[2] - 0.02, self.armPosition[2] +0.02)
-        self.z = np.clip(self.z, 2.255 - self.armPosition[1] - 0.05, 2.255 - self.armPosition[1] + 0.02)
+        self.z = np.clip(self.z, 2.255 - self.armPosition[1] - 0.06, 2.255 - self.armPosition[1] + 0.04)
         self.alpha = np.clip(self.alpha, -1, 1)
         self.beta = np.clip(self.beta, -1, 1)
         self.gamma = np.clip(self.gamma, -1, 1)

@@ -91,8 +91,8 @@ Robot {
             }
           ]
           endPoint Solid {
-            translation -0.007472974184397023 0.007497278636751771 0.0774953050048903
-            rotation -0.9477021255080229 -0.30273795452867935 0.10104658428352259 0.010001369885703963
+            translation -0.00747297418439702 0.007497278636751767 0.07749530500489035
+            rotation -0.9477021255080242 -0.3027379545286799 0.1010465842835073 0.010001369885615157
             children [
               Shape {
                 appearance USE IRB_APPEARANCE
@@ -305,7 +305,7 @@ Robot {
                                         ]
                                         endPoint Solid {
                                           translation 0.125001 0 0
-                                          rotation 0.6867687837581239 0.726818041428677 0.009174546810019465 0.0003179306852862593
+                                          rotation 0.6867687837581467 0.7268180414286555 0.009174546810019193 0.0003179306852862593
                                           children [
                                             SliderJoint {
                                               jointParameters JointParameters {
@@ -593,7 +593,7 @@ DEF TABLE_WITH_PAPER_SHEET Transform {
   ]
 }
 Solid {
-  translation 0.935 1.9 -0.022
+  translation 0.937 1.9 -0.022
   rotation 0 0 1 0
   children [
     DEF TARGET Solid {
