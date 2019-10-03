@@ -190,9 +190,9 @@ class ArmEnv(object):
         self.y = self.armPosition[2]
         self.z = 2.255 - self.armPosition[1]
         # alpha/beta/gamma in rad relative to initial orientation
-        self.alpha = 0
-        self.beta = 0
-        self.gamma = 0
+        self.alpha = 0.0
+        self.beta = 0.0
+        self.gamma = 0.0
 
         # Call "ikpy" to compute the inverse kinematics of the arm.
         # ikpy only compute position
