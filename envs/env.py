@@ -121,9 +121,12 @@ class ArmEnv(object):
         self.targetPosition = self.target.getPosition()
         # Get the translation field fo the hole
         self.hole_translation = self.hole.getField('translation')
+        self.hole_rotation = self.hole.getField('rotation')
         # Get initial position of hole
         self.hole_init_position = self.hole_translation.getSFVec3f()
+        self.hole_init_rotation = self.hole_rotation.getSFRotation()
         print("Hole init position", self.hole_init_position)
+        print("Hole init rotation", self.hole_init_rotation)
 
         # get and enable sensors
         # Fxyz: N, Txyz: N*m
@@ -186,9 +189,10 @@ class ArmEnv(object):
 
         print("*******************************world rested*******************************")
 
-        # TODO: set random rotation for hole
         hole_new_position = self.hole_init_position + (np.random.rand(3)-0.5) / 200
+        hole_new_rotation = self.hole_init_rotation + (np.random.rand(4)-0.5) / 200
         self.hole_translation.setSFVec3f([hole_new_position[0], hole_new_position[1], -0.02])
+        self.hole_rotation.setSFRotation([hole_new_rotation[0], hole_new_rotation[1], hole_new_rotation[2], hole_new_rotation[3]*10])
 
         '''reset signals'''
         self.timer = 0
