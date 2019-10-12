@@ -9,7 +9,7 @@ except ImportError:
 
 import math
 from controller import Supervisor
-from controller import Node
+import matplotlib.pyplot as plt
 import numpy as np
 import algorithms.calculations as cal
 from gym import spaces
@@ -148,6 +148,15 @@ class ArmEnv(object):
         self.TX = self.tx_sensor.getTorqueFeedback()
         self.TY = self.ty_sensor.getTorqueFeedback()
         self.TZ = self.tz_sensor.getTorqueFeedback()
+        # Used to plot F/T_t
+        self.plt_FX = []
+        self.plt_FY = []
+        self.plt_FZ = []
+        self.plt_TX = []
+        self.plt_TY = []
+        self.plt_TZ = []
+        self.plt_time = []
+        self.plt_current_time = 0
 
         """Initial Position of the robot"""
         # x/y/z in meters relative to world frame
@@ -168,6 +177,16 @@ class ArmEnv(object):
         self.timer += 1
         # read state
         uncode_state, self.state = self.__get_state()
+
+        # record graph
+        self.plt_current_time += self.timeStep * 0.001
+        self.plt_time.append(self.plt_current_time)
+        self.plt_FX.append(self.state[6])
+        self.plt_FY.append(self.state[7])
+        self.plt_FZ.append(self.state[8])
+        self.plt_TX.append(self.state[9])
+        self.plt_TY.append(self.state[10])
+        self.plt_TZ.append(self.state[11])
 
         # adjust action to usable motion
         action = cal.actions(self.state, action, self.pd)
@@ -234,6 +253,17 @@ class ArmEnv(object):
         '''state'''
         # get
         uncode_init_state, self.init_state, = self.__get_state()
+
+        '''reset graph'''
+        # Used to plot F/T_t
+        self.plt_FX = []
+        self.plt_FY = []
+        self.plt_FZ = []
+        self.plt_TZ = []
+        self.plt_TZ = []
+        self.plt_TZ = []
+        self.plt_time = []
+        self.plt_current_time = 0
 
         print('initial state:')
         print("State 0-3", self.init_state[0:3])
@@ -316,4 +346,18 @@ if __name__ == '__main__':
             _, _, _, done, r =env.step([(0, 0, 0, 0, 0, 0), ""])
             # if done:
             #     break
+        # plot force
+        plt.subplot(231)
+        plt.plot(env.plt_time, env.plt_FX)
+        plt.subplot(232)
+        plt.plot(env.plt_time, env.plt_FY)
+        plt.subplot(233)
+        plt.plot(env.plt_time, env.plt_FZ)
+        plt.subplot(234)
+        plt.plot(env.plt_time, env.plt_TX)
+        plt.subplot(235)
+        plt.plot(env.plt_time, env.plt_TY)
+        plt.subplot(236)
+        plt.plot(env.plt_time, env.plt_TZ)
+        plt.show()
         env.reset()
