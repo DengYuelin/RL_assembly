@@ -9,6 +9,7 @@ except ImportError:
 
 import math
 from controller import Supervisor
+from controller import Node
 import numpy as np
 import algorithms.calculations as cal
 from gym import spaces
@@ -110,13 +111,19 @@ class ArmEnv(object):
             motor = self.supervisor.getMotor(motorName)
             self.motors.append(motor)
 
-        # Get the arm and target nodes.
+        # Get the arm, target and hole nodes.
         self.target = self.supervisor.getFromDef('TARGET')
         self.arm = self.supervisor.getFromDef('ARM')
         self.pegroot = self.supervisor.getFromDef('PEGROOT')
+        self.hole = self.supervisor.getFromDef('HOLE')
         # Get the absolute position of the arm base and target.
         self.armPosition = self.arm.getPosition()
         self.targetPosition = self.target.getPosition()
+        # Get the translation field fo the hole
+        self.hole_translation = self.hole.getField('translation')
+        # Get initial position of hole
+        self.hole_init_position = self.hole_translation.getSFVec3f()
+        print("Hole init position", self.hole_init_position)
 
         # get and enable sensors
         # Fxyz: N, Txyz: N*m
@@ -179,7 +186,9 @@ class ArmEnv(object):
 
         print("*******************************world rested*******************************")
 
-        # TODO: set random position for hole
+        # TODO: set random rotation for hole
+        hole_new_position = self.hole_init_position + (np.random.rand(3)-0.5) / 200
+        self.hole_translation.setSFVec3f([hole_new_position[0], hole_new_position[1], -0.02])
 
         '''reset signals'''
         self.timer = 0
@@ -258,12 +267,12 @@ class ArmEnv(object):
     def __execute_action(self, action):
         """ execute action """
         # do action
-        self.x += action[0]
-        self.y += action[1]
-        self.z -= action[2]
-        self.alpha += action[3]
-        self.beta += action[4]
-        self.gamma += action[5]
+        # self.x += action[0]
+        # self.y += action[1]
+        # self.z -= action[2]
+        # self.alpha += action[3]
+        # self.beta += action[4]
+        # self.gamma += action[5]
 
         # bound position
         self.x = np.clip(self.x, 0.94455 - self.armPosition[0] - 0.02, 0.94455 - self.armPosition[0] + 0.02)
