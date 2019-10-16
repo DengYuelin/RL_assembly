@@ -256,13 +256,13 @@ class ArmEnv(object):
 
         '''reset graph'''
         # Used to plot F/T_t
-        self.plt_FX = []
-        self.plt_FY = []
-        self.plt_FZ = []
-        self.plt_TZ = []
-        self.plt_TZ = []
-        self.plt_TZ = []
-        self.plt_time = []
+        self.plt_FX.clear()
+        self.plt_FY.clear()
+        self.plt_FZ.clear()
+        self.plt_TX.clear()
+        self.plt_TY.clear()
+        self.plt_TZ.clear()
+        self.plt_time.clear()
         self.plt_current_time = 0
 
         print('initial state:')
@@ -301,12 +301,12 @@ class ArmEnv(object):
     def __execute_action(self, action):
         """ execute action """
         # do action
-        # self.x += action[0]
-        # self.y += action[1]
-        # self.z -= action[2]
-        # self.alpha += action[3]
-        # self.beta += action[4]
-        # self.gamma += action[5]
+        self.x += action[0]
+        self.y += action[1]
+        self.z -= action[2]
+        self.alpha += action[3]
+        self.beta += action[4]
+        self.gamma += action[5]
 
         # bound position
         self.x = np.clip(self.x, 0.94455 - self.armPosition[0] - 0.02, 0.94455 - self.armPosition[0] + 0.02)
@@ -347,17 +347,17 @@ if __name__ == '__main__':
             # if done:
             #     break
         # plot force
-        plt.subplot(231)
-        plt.plot(env.plt_time, env.plt_FX)
-        plt.subplot(232)
-        plt.plot(env.plt_time, env.plt_FY)
-        plt.subplot(233)
-        plt.plot(env.plt_time, env.plt_FZ)
-        plt.subplot(234)
-        plt.plot(env.plt_time, env.plt_TX)
-        plt.subplot(235)
-        plt.plot(env.plt_time, env.plt_TY)
-        plt.subplot(236)
-        plt.plot(env.plt_time, env.plt_TZ)
-        plt.show()
+        # plt.subplot(231)
+        # plt.plot(env.plt_time, env.plt_FX)
+        # plt.subplot(232)
+        # plt.plot(env.plt_time, env.plt_FY)
+        # plt.subplot(233)
+        # plt.plot(env.plt_time, env.plt_FZ)
+        # plt.subplot(234)
+        # plt.plot(env.plt_time, env.plt_TX)
+        # plt.subplot(235)
+        # plt.plot(env.plt_time, env.plt_TY)
+        # plt.subplot(236)
+        # plt.plot(env.plt_time, env.plt_TZ)
+        # plt.show()
         env.reset()

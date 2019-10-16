@@ -45,6 +45,8 @@ def actions(s, a, en_pd):
     action[0] /= 10000
     action[1] /= 10000
     action[2] /= 1000
+    if action[2] < 0:
+        action[2] = 0
     action[3] /= 1000
     action[4] /= 1000
     action[5] /= 1000
