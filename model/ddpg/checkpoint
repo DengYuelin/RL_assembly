@@ -1,2 +1,2 @@
-model_checkpoint_path: "_epochs_2_episodes_100_rollout_steps_200model"
-all_model_checkpoint_paths: "_epochs_2_episodes_100_rollout_steps_200model"
+model_checkpoint_path: "_epochs_2_episodes_500_rollout_steps_200model"
+all_model_checkpoint_paths: "_epochs_2_episodes_500_rollout_steps_200model"
