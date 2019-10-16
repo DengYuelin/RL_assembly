@@ -4,8 +4,8 @@ WorldInfo {
 }
 Viewpoint {
   fieldOfView 0.85
-  orientation -0.42337062894508287 0.8995932459227546 0.10718816369733782 0.7303040276320668
-  position 1.6396674892024228 2.3593674005277863 0.8883727758212004
+  orientation -0.5179961632416237 0.8385686043658027 0.16876809721907454 0.8715275765091359
+  position 1.538728892345498 2.407538671571406 0.7037158198570209
 }
 TexturedBackground {
   texture "empty_office"
@@ -91,8 +91,8 @@ Robot {
             }
           ]
           endPoint Solid {
-            translation -0.007472974184396924 0.007497278636751672 0.07749530500489188
-            rotation -0.9477021255080318 -0.30273795452868557 0.10104658428342017 0.010001369885082321
+            translation -0.007472974184396877 0.007497278636751625 0.07749530500489263
+            rotation -0.9477021255080337 -0.30273795452868724 0.10104658428339722 0.010001369885082321
             children [
               Shape {
                 appearance USE IRB_APPEARANCE
@@ -305,7 +305,7 @@ Robot {
                                         ]
                                         endPoint Solid {
                                           translation 0.125001 0 0
-                                          rotation 0.6867687837587729 0.7268180414280638 0.009174546810011707 0.0003179306852862593
+                                          rotation 0.6867687837590805 0.7268180414277733 0.009174546810008037 0.0003179306852862593
                                           children [
                                             SliderJoint {
                                               jointParameters JointParameters {
@@ -374,36 +374,57 @@ Robot {
                                                                         }
                                                                       ]
                                                                       endPoint Solid {
-                                                                        translation 0.040001154775910326 8.19425633929874e-09 -7.278602165428083e-10
-                                                                        rotation 3.295774578876319e-11 3.611685265732737e-11 1 1.5700000720719116
+                                                                        translation -0.001 0 0
+                                                                        rotation 0 0 1 0
                                                                         children [
-                                                                          DEF PEGROOT Solid {
-                                                                            translation 0 0.025 0
-                                                                            rotation -1 0 0 1.5707959999999999
-                                                                            children [
-                                                                              Shape {
-                                                                                appearance PBRAppearance {
-                                                                                  baseColor 0 0 0
-                                                                                  metalness 0
-                                                                                }
-                                                                                geometry Sphere {
-                                                                                  radius 0.002
-                                                                                  subdivision 2
-                                                                                }
+                                                                          HingeJoint {
+                                                                            jointParameters HingeJointParameters {
+                                                                            }
+                                                                            device [
+                                                                              RotationalMotor {
+                                                                                name "TZ_SENSOR"
+                                                                                maxTorque 20
                                                                               }
                                                                             ]
-                                                                          }
-                                                                          DEF PEG Shape {
-                                                                            geometry Cylinder {
-                                                                              height 0.05
-                                                                              radius 0.0145
+                                                                            endPoint Solid {
+                                                                              translation 0.0400012 8.19426e-09 -7.2786e-10
+                                                                              rotation 3.295774578876319e-11 3.611685265732737e-11 1 1.5700000720719116
+                                                                              children [
+                                                                                DEF PEGROOT Solid {
+                                                                                  translation 0 0.025 0
+                                                                                  rotation -1 0 0 1.5707959999999999
+                                                                                  children [
+                                                                                    Shape {
+                                                                                      appearance PBRAppearance {
+                                                                                        baseColor 0 0 0
+                                                                                        metalness 0
+                                                                                      }
+                                                                                      geometry Sphere {
+                                                                                        radius 0.002
+                                                                                        subdivision 2
+                                                                                      }
+                                                                                    }
+                                                                                  ]
+                                                                                }
+                                                                                DEF PEG Shape {
+                                                                                  geometry Cylinder {
+                                                                                    height 0.05
+                                                                                    radius 0.0145
+                                                                                  }
+                                                                                }
+                                                                              ]
+                                                                              name "solid(1)"
+                                                                              boundingObject USE PEG
+                                                                              physics Physics {
+                                                                                density 2000
+                                                                              }
                                                                             }
                                                                           }
                                                                         ]
-                                                                        name "solid(1)"
-                                                                        boundingObject USE PEG
+                                                                        boundingObject Sphere {
+                                                                          radius 0.001
+                                                                        }
                                                                         physics Physics {
-                                                                          density 2000
                                                                         }
                                                                       }
                                                                     }

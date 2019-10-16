@@ -101,7 +101,7 @@ class ArmEnv(object):
 
         """Initialize the Webots Supervisor"""
         self.supervisor = Supervisor()
-        self.timeStep = int(8)
+        self.timeStep = int(2)
         # TODO: It's there a way to start simulation automatically?
 
         '''enable world devices'''
@@ -140,7 +140,7 @@ class ArmEnv(object):
         self.tx_sensor.enableTorqueFeedback(self.timeStep)
         self.ty_sensor = self.supervisor.getMotor('TY_SENSOR')
         self.ty_sensor.enableTorqueFeedback(self.timeStep)
-        self.tz_sensor = self.supervisor.getMotor('TY_SENSOR')
+        self.tz_sensor = self.supervisor.getMotor('TZ_SENSOR')
         self.tz_sensor.enableTorqueFeedback(self.timeStep)
         self.FZ = self.fz_sensor.getForceFeedback()
         self.FX = self.fx_sensor.getForceFeedback()
@@ -179,7 +179,7 @@ class ArmEnv(object):
         uncode_state, self.state = self.__get_state()
 
         # record graph
-        self.plt_current_time += self.timeStep * 0.001
+        self.plt_current_time += self.timeStep * 0.01
         self.plt_time.append(self.plt_current_time)
         self.plt_FX.append(self.state[6])
         self.plt_FY.append(self.state[7])
@@ -248,7 +248,7 @@ class ArmEnv(object):
             self.supervisor.step(self.timeStep)
 
         for i in range(6):
-            self.motors[i].setVelocity(0.07)
+            self.motors[i].setVelocity(0.06)
 
         '''state'''
         # get
@@ -340,24 +340,24 @@ class ArmEnv(object):
 if __name__ == '__main__':
     env = ArmEnv()
     while True:
-        for i in range(200):
+        for i in range(400):
             a = env.sample_action()
             # env.step(a)
             _, _, _, done, r =env.step([(0, 0, 0, 0, 0, 0), ""])
             # if done:
             #     break
         # plot force
-        # plt.subplot(231)
-        # plt.plot(env.plt_time, env.plt_FX)
-        # plt.subplot(232)
-        # plt.plot(env.plt_time, env.plt_FY)
-        # plt.subplot(233)
-        # plt.plot(env.plt_time, env.plt_FZ)
-        # plt.subplot(234)
-        # plt.plot(env.plt_time, env.plt_TX)
-        # plt.subplot(235)
-        # plt.plot(env.plt_time, env.plt_TY)
-        # plt.subplot(236)
-        # plt.plot(env.plt_time, env.plt_TZ)
-        # plt.show()
+        plt.subplot(231)
+        plt.plot(env.plt_time, env.plt_FX)
+        plt.subplot(232)
+        plt.plot(env.plt_time, env.plt_FY)
+        plt.subplot(233)
+        plt.plot(env.plt_time, env.plt_FZ)
+        plt.subplot(234)
+        plt.plot(env.plt_time, env.plt_TX)
+        plt.subplot(235)
+        plt.plot(env.plt_time, env.plt_TY)
+        plt.subplot(236)
+        plt.plot(env.plt_time, env.plt_TZ)
+        plt.show()
         env.reset()

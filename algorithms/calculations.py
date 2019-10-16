@@ -42,14 +42,17 @@ def actions(s, a, en_pd):
         action = action + action * a[0]
     else:
         action = a[0]
-    action[0] /= 10000
-    action[1] /= 10000
-    action[2] /= 1000
-    if action[2] < 0:
-        action[2] = 0
+    action[0] /= 3000
+    action[1] /= 3000
+    action[2] /= 10000
+
     action[3] /= 1000
     action[4] /= 1000
     action[5] /= 1000
+
+    if action[2] < 0:
+        action[2] = 0
+
     for i in range(6):
         action[i] = round(action[i], 4)
     return action
