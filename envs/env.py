@@ -340,7 +340,7 @@ class ArmEnv(object):
 if __name__ == '__main__':
     env = ArmEnv()
     while True:
-        for i in range(400):
+        for i in range(300):
             a = env.sample_action()
             # env.step(a)
             _, _, _, done, r =env.step([(0, 0, 0, 0, 0, 0), ""])
