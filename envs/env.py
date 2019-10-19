@@ -307,7 +307,7 @@ class ArmEnv(object):
         self.z -= action[2]
         self.alpha += action[3]
         self.beta += action[4]
-        self.gamma += action[5]
+        self.gamma -= action[5]
 
         # bound position
         self.x = np.clip(self.x, 0.94455 - self.armPosition[0] - 0.02, 0.94455 - self.armPosition[0] + 0.02)
@@ -341,7 +341,7 @@ class ArmEnv(object):
 if __name__ == '__main__':
     env = ArmEnv()
     while True:
-        for i in range(300):
+        for i in range(3000):
             a = env.sample_action()
             # env.step(a)
             _, _, _, done, r =env.step([(0, 0, 0, 0, 0, 0), ""])
