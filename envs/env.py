@@ -302,9 +302,9 @@ class ArmEnv(object):
     def __execute_action(self, action):
         """ execute action """
         # do action
-        # self.x += action[0]
-        # self.y += action[1]
-        # self.z -= action[2]
+        self.x += action[0]
+        self.y += action[1]
+        self.z -= action[2]
         self.alpha += action[3]
         self.beta += action[4]
         self.gamma -= action[5]
