@@ -212,7 +212,7 @@ class ArmEnv(object):
         hole_new_position = self.hole_init_position + (np.random.rand(3)-0.5) / 200
         hole_new_rotation = self.hole_init_rotation + (np.random.rand(4)-0.5) / 200
         self.hole_translation.setSFVec3f([hole_new_position[0], hole_new_position[1], -0.02])
-        self.hole_rotation.setSFRotation([hole_new_rotation[0], hole_new_rotation[1], hole_new_rotation[2], hole_new_rotation[3]*10])
+        self.hole_rotation.setSFRotation([hole_new_rotation[0], hole_new_rotation[1], hole_new_rotation[2], hole_new_rotation[3]])
 
         '''reset signals'''
         self.timer = 0
@@ -341,7 +341,7 @@ class ArmEnv(object):
 if __name__ == '__main__':
     env = ArmEnv()
     while True:
-        for i in range(3000):
+        for i in range(300):
             a = env.sample_action()
             # env.step(a)
             _, _, _, done, r =env.step([(0, 0, 0, 0, 0, 0), ""])
