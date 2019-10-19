@@ -210,7 +210,7 @@ class ArmEnv(object):
 
         '''set random position for hole'''
         hole_new_position = self.hole_init_position + (np.random.rand(3)-0.5) / 200
-        hole_new_rotation = self.hole_init_rotation + (np.random.rand(4)-0.5) / 200
+        hole_new_rotation = self.hole_init_rotation + (np.random.rand(4)-0.5) / 40
         self.hole_translation.setSFVec3f([hole_new_position[0], hole_new_position[1], -0.02])
         self.hole_rotation.setSFRotation([hole_new_rotation[0], hole_new_rotation[1], hole_new_rotation[2], hole_new_rotation[3]])
 
@@ -302,9 +302,9 @@ class ArmEnv(object):
     def __execute_action(self, action):
         """ execute action """
         # do action
-        self.x += action[0]
-        self.y += action[1]
-        self.z -= action[2]
+        # self.x += action[0]
+        # self.y += action[1]
+        # self.z -= action[2]
         self.alpha += action[3]
         self.beta += action[4]
         self.gamma -= action[5]
