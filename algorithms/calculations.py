@@ -60,9 +60,9 @@ def actions(s, a, en_pd):
 
 # this function checks if the force and torque extends safety value
 def safetycheck(s):
-    if s[6] >= 500 or s[7]>= 500 or s[8] >= 500:
+    if s[6] >= 200 or s[7]>= 200 or s[8] >= 200:
         return False
-    elif s[9] >= 50 or s[10]>= 50 or s[11] >= 50:
+    elif s[9] >= 20 or s[10]>= 20 or s[11] >= 20:
         return False
     else:
         return True

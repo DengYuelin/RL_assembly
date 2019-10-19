@@ -101,7 +101,7 @@ class ArmEnv(object):
 
         """Initialize the Webots Supervisor"""
         self.supervisor = Supervisor()
-        self.timeStep = int(2)
+        self.timeStep = int(8)
         # TODO: It's there a way to start simulation automatically?
 
         '''enable world devices'''
@@ -179,7 +179,7 @@ class ArmEnv(object):
         uncode_state, self.state = self.__get_state()
 
         # record graph
-        self.plt_current_time += self.timeStep * 0.01
+        self.plt_current_time += self.timeStep * 0.001
         self.plt_time.append(self.plt_current_time)
         self.plt_FX.append(self.state[6])
         self.plt_FY.append(self.state[7])
@@ -208,6 +208,7 @@ class ArmEnv(object):
 
         print("*******************************world rested*******************************")
 
+        '''set random position for hole'''
         hole_new_position = self.hole_init_position + (np.random.rand(3)-0.5) / 200
         hole_new_rotation = self.hole_init_rotation + (np.random.rand(4)-0.5) / 200
         self.hole_translation.setSFVec3f([hole_new_position[0], hole_new_position[1], -0.02])
@@ -248,7 +249,7 @@ class ArmEnv(object):
             self.supervisor.step(self.timeStep)
 
         for i in range(6):
-            self.motors[i].setVelocity(0.06)
+            self.motors[i].setVelocity(0.07)
 
         '''state'''
         # get
