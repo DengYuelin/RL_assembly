@@ -32,21 +32,30 @@ DQN_LAVBELS = ['Typical DQN', 'VPB_DQN']
 DDPG_LAVBELS = ['Typical DDPG', 'VPB_DDPG']
 
 
-def plot(result_path,
+def plot_reward(result_path,
          x_labels="episodes", y_labels="reward", file_name='', render=True):
     """ Plot reward steps and times """
 
-    plt.figure(figsize=(15, 15), dpi=100)
-    plt.title('Search Result')
+    plt.figure(figsize=(10, 8), dpi=300)
+    plt.tight_layout(pad=3, w_pad=1., h_pad=0.5)
+    plt.subplots_adjust(left=0.16, bottom=0.13, right=0.96, top=0.85, wspace=0.23, hspace=0.23)
+    # plt.title('Search Result')
     result_data = np.load(result_path)
     mean_plot_data = np.mean(result_data, axis=0)
-    std_plot_data = np.mean(result_data, axis=0)
+    print(mean_plot_data)
+    std_plot_data = np.std(result_data, axis=0)
+    print(std_plot_data)
     plt.plot(mean_plot_data, linewidth=3.75)
     plt.fill_between(np.arange(len(mean_plot_data)), mean_plot_data - std_plot_data,
                      mean_plot_data + std_plot_data, alpha=0.3)
 
     plt.ylabel(y_labels)
     plt.xlabel(x_labels)
+    plt.xticks(fontsize=FONT_SIZE)
+    plt.yticks(fontsize=FONT_SIZE)
+    plt.xlabel("Episodes", fontsize=FONT_SIZE)
+    plt.ylabel("Episode Reward", fontsize=FONT_SIZE)
+
     # plt.legend(YLABEL)
     plt.savefig(file_name)
     if render:
@@ -135,7 +144,7 @@ def plot_comparision_curve_with_variance(result_paths, file_name='', render=Fals
 
 if __name__ == "__main__":
 
-    # data = np.load("./ddpg/_epochs_2_episodes_100_rollout_steps_200reward.npy")
+    # data = np.load("./pd/_epochs_2_episodes_5_rollout_steps_300reward.npy")
     # print(data)
-    plot("./pd/_epochs_2_episodes_5_rollout_steps_300steps.npy",
-         file_name="./pd/steps.pdf")
+    plot_reward("./pd/_epochs_2_episodes_5_rollout_steps_300reward.npy",
+         file_name="./pd/reward.pdf")

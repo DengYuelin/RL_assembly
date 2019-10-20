@@ -340,6 +340,7 @@ class ArmEnv(object):
 # input random action to the robot
 if __name__ == '__main__':
     env = ArmEnv()
+    count = 0;
     while True:
         for i in range(300):
             a = env.sample_action()
@@ -348,17 +349,19 @@ if __name__ == '__main__':
             # if done:
             #     break
         # plot force
-        # plt.subplot(231)
-        # plt.plot(env.plt_time, env.plt_FX)
-        # plt.subplot(232)
-        # plt.plot(env.plt_time, env.plt_FY)
-        # plt.subplot(233)
-        # plt.plot(env.plt_time, env.plt_FZ)
-        # plt.subplot(234)
-        # plt.plot(env.plt_time, env.plt_TX)
-        # plt.subplot(235)
-        # plt.plot(env.plt_time, env.plt_TY)
-        # plt.subplot(236)
-        # plt.plot(env.plt_time, env.plt_TZ)
+        plt.subplot(231)
+        plt.plot(env.plt_time, env.plt_FX)
+        plt.subplot(232)
+        plt.plot(env.plt_time, env.plt_FY)
+        plt.subplot(233)
+        plt.plot(env.plt_time, env.plt_FZ)
+        plt.subplot(234)
+        plt.plot(env.plt_time, env.plt_TX)
+        plt.subplot(235)
+        plt.plot(env.plt_time, env.plt_TY)
+        plt.subplot(236)
+        plt.plot(env.plt_time, env.plt_TZ)
+        plt.savefig(str(count)+'_plt.png')
+        count += 1
         # plt.show()
         env.reset()
