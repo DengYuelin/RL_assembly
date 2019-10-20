@@ -12,7 +12,7 @@ data_path = './Data/'
 model_path = './model/' + algorithm_name + "/"
 
 """parameters for running"""
-nb_epochs = 2
+nb_epochs = 20
 nb_epoch_cycles = 5
 nb_rollout_steps = 300
 
