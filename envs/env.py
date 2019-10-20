@@ -211,8 +211,8 @@ class ArmEnv(object):
         '''set random position for hole'''
         hole_new_position = self.hole_init_position + (np.random.rand(3)-0.5) / 200
         hole_new_rotation = self.hole_init_rotation + (np.random.rand(4)-0.5) / 40
-        self.hole_translation.setSFVec3f([hole_new_position[0], hole_new_position[1], -0.02])
-        self.hole_rotation.setSFRotation([hole_new_rotation[0], hole_new_rotation[1], hole_new_rotation[2], hole_new_rotation[3]])
+        # self.hole_translation.setSFVec3f([hole_new_position[0], hole_new_position[1], -0.02])
+        # self.hole_rotation.setSFRotation([hole_new_rotation[0], hole_new_rotation[1], hole_new_rotation[2], hole_new_rotation[3]])
 
         '''reset signals'''
         self.timer = 0
@@ -348,18 +348,17 @@ if __name__ == '__main__':
             # if done:
             #     break
         # plot force
-        plt.subplot(231)
-        plt.plot(env.plt_time, env.plt_FX)
-        plt.subplot(232)
-        plt.plot(env.plt_time, env.plt_FY)
-        plt.subplot(233)
-        plt.plot(env.plt_time, env.plt_FZ)
-        plt.subplot(234)
-        plt.plot(env.plt_time, env.plt_TX)
-        plt.subplot(235)
-        plt.plot(env.plt_time, env.plt_TY)
-        plt.subplot(236)
-        plt.plot(env.plt_time, env.plt_TZ)
-        plt.show()
+        # plt.subplot(231)
+        # plt.plot(env.plt_time, env.plt_FX)
+        # plt.subplot(232)
+        # plt.plot(env.plt_time, env.plt_FY)
+        # plt.subplot(233)
+        # plt.plot(env.plt_time, env.plt_FZ)
+        # plt.subplot(234)
+        # plt.plot(env.plt_time, env.plt_TX)
+        # plt.subplot(235)
+        # plt.plot(env.plt_time, env.plt_TY)
+        # plt.subplot(236)
+        # plt.plot(env.plt_time, env.plt_TZ)
+        # plt.show()
         env.reset()
-        ## test

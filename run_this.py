@@ -1,6 +1,6 @@
 from envs.env import ArmEnv
 from algorithms.pd.PD import PD
-from algorithms.ddpg.ddpg import learn
+from algorithms.pd.pd_controller import learn
 import numpy as np
 
 # set env
@@ -13,8 +13,8 @@ model_path = './model/' + algorithm_name + "/"
 
 """parameters for running"""
 nb_epochs = 2
-nb_epoch_cycles = 500
-nb_rollout_steps = 200
+nb_epoch_cycles = 5
+nb_rollout_steps = 300
 
 file_name = '_epochs_' + str(nb_epochs)\
             + "_episodes_" + str(nb_epoch_cycles) + \
@@ -33,6 +33,7 @@ steps = []
 def train():
 
     if algorithm_name == 'ddpg':
+        from algorithms.ddpg.ddpg import learn
         learn(network='mlp',
               env=env,
               noise_type='normal_0.2',
@@ -50,10 +51,11 @@ def train():
               )
 
     if algorithm_name == 'pd':
+        from algorithms.pd.pd_controller import learn
         learn(
             controller=PD,
             env=env,
-            nb_epochs=nb_epochs,  # with default settings, perform 1M steps total
+            nb_epochs=nb_epochs,
             nb_epoch_cycles=nb_epoch_cycles,
             nb_rollout_steps=nb_rollout_steps,
             data_path_reward=data_path_reward,
@@ -67,4 +69,3 @@ def train():
 
 if __name__ == '__main__':
     train()
-

@@ -36,8 +36,9 @@ def learn(
             episode_states = []
             for j in range(nb_rollout_steps):
 
-                a = pd.cal(s, np.array([0, 0, -4, 0, 0]))
-                s_, r, done, safe = env.step(a)
+                a = pd.cal(s, np.array([0, 0, 15, 0, 0, 0]))
+                # s_, r, done, safe = env.step(a)
+                s_, r, done, safe = env.step([(0, 0, 0, 0, 0, 0), ""])
                 episode_reward += r
                 episode_step += 1
                 episode_states.append(

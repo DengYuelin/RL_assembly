@@ -16,15 +16,16 @@ def reward_step(state, safe_or_not, step_num):
     peg_length = 50
     step_max = 200
     force = state[6:12]
+    reward = 0
 
     if safe_or_not is False:
         print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
         print('Max_force_moment:', force)
-        reward = -1 + (peg_length - state[2])/set_insert_goal_depth
+        reward = -1
         print("-------------------------------- The force is too large!!! -----------------------------")
     else:
         """consider force and moment"""
-        reward = -0.02
+        reward = (-1 + (peg_length - state[2])/set_insert_goal_depth)/10
 
     # insert complete
     if (peg_length + state[2]) > set_insert_goal_depth:
@@ -60,7 +61,7 @@ def actions(s, a, en_pd):
 
 # this function checks if the force and torque extends safety value
 def safetycheck(s):
-    if s[6] >= 200 or s[7]>= 200 or s[8] >= 200:
+    if s[6] >= 500 or s[7]>= 500 or s[8] >= 500:
         return False
     elif s[9] >= 20 or s[10]>= 20 or s[11] >= 20:
         return False
