@@ -16,7 +16,7 @@ def reward_step(state, safe_or_not, step_num):
     peg_length = 50
     step_max = 200
     force = state[6:12]
-    reward = 0
+
 
     if safe_or_not is False:
         print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')

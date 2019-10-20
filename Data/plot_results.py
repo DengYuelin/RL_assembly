@@ -137,5 +137,5 @@ if __name__ == "__main__":
 
     # data = np.load("./ddpg/_epochs_2_episodes_100_rollout_steps_200reward.npy")
     # print(data)
-    plot("./pd/_epochs_2_episodes_5_rollout_steps_300states.npy",
-         file_name="./ddpg/figures/reward.pdf")
+    plot("./pd/_epochs_2_episodes_5_rollout_steps_300steps.npy",
+         file_name="./pd/steps.pdf")

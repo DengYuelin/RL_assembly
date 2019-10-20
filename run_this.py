@@ -7,7 +7,7 @@ import numpy as np
 env = ArmEnv()
 
 # parameters
-algorithm_name = 'ddpg'
+algorithm_name = 'pd'
 data_path = './Data/'
 model_path = './model/' + algorithm_name + "/"
 

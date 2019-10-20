@@ -16,7 +16,6 @@ def learn(
         data_path_times=""
 ):
 
-    pd = controller
     epochs_rewards = np.zeros((nb_epochs, nb_epoch_cycles), dtype=np.float32)
     epochs_times = np.zeros((nb_epochs, nb_epoch_cycles), dtype=np.float32)
     epochs_steps = np.zeros((nb_epochs, nb_epoch_cycles), dtype=np.float32)
@@ -36,9 +35,8 @@ def learn(
             episode_states = []
             for j in range(nb_rollout_steps):
 
-                a = pd.cal(s, np.array([0, 0, 15, 0, 0, 0]))
-                # s_, r, done, safe = env.step(a)
-                s_, r, done, safe = env.step([(0, 0, 0, 0, 0, 0), ""])
+                a = 0
+                s_, us, r, done, safe = env.step([(0, 0, 0, 0, 0, 0), ""])
                 episode_reward += r
                 episode_step += 1
                 episode_states.append(
