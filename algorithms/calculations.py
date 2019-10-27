@@ -44,9 +44,9 @@ def actions(s, a, en_pd):
         action = action + action * a[0]
     else:
         action = a[0]
-    action[0] /= 9000
-    action[1] /= 9000
-    action[2] /= 3500
+    action[0] /= 8000
+    action[1] /= 8000
+    action[2] /= 3000
 
     action[3] /= 500
     action[4] /= 500

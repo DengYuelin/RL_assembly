@@ -91,8 +91,8 @@ Robot {
             }
           ]
           endPoint Solid {
-            translation -0.007472974184396877 0.007497278636751625 0.07749530500489263
-            rotation -0.9477021255080337 -0.30273795452868724 0.10104658428339722 0.010001369885082321
+            translation -0.0074729741843968705 0.007497278636751618 0.07749530500489274
+            rotation -0.947702125508034 -0.3027379545286875 0.10104658428339389 0.010001369885082321
             children [
               Shape {
                 appearance USE IRB_APPEARANCE
@@ -305,7 +305,7 @@ Robot {
                                         ]
                                         endPoint Solid {
                                           translation 0.125001 0 0
-                                          rotation 0.6867687837590805 0.7268180414277733 0.009174546810008037 0.0003179306852862593
+                                          rotation 0.686768783759126 0.7268180414277302 0.009174546810007492 0.0003179306852862593
                                           children [
                                             SliderJoint {
                                               jointParameters JointParameters {
@@ -409,7 +409,7 @@ Robot {
                                                                                 DEF PEG Shape {
                                                                                   geometry Cylinder {
                                                                                     height 0.05
-                                                                                    radius 0.0145
+                                                                                    radius 0.014
                                                                                   }
                                                                                 }
                                                                               ]
