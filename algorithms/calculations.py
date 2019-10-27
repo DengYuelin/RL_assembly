@@ -2,8 +2,9 @@
 import numpy as np
 import copy as cp
 from algorithms.pd.PD import PD
+from algorithms.MovingAverage import MA
 pd = PD()
-
+ma = MA(10)
 
 
 
@@ -43,9 +44,9 @@ def actions(s, a, en_pd):
         action = action + action * a[0]
     else:
         action = a[0]
-    action[0] /= 5000
-    action[1] /= 5000
-    action[2] /= 3000
+    action[0] /= 9000
+    action[1] /= 9000
+    action[2] /= 3500
 
     action[3] /= 500
     action[4] /= 500
@@ -76,9 +77,12 @@ def code_state(current_state):
     position_scale = 1000
     final_state = state
     final_state[0:3] *= position_scale # m to mm
+
+    """Add LPF to force and torque"""
+    final_state[6:12] = ma.cal(final_state[6:12])
+
     for i in range(12):
         final_state[i] = round(final_state[i], 4)
-
 
     '''Add Threshold'''
 
@@ -87,4 +91,4 @@ def code_state(current_state):
 
 def clear():
     pd.clear()
-
+    ma.clear()

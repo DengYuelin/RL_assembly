@@ -91,8 +91,8 @@ Robot {
             }
           ]
           endPoint Solid {
-            translation -0.007472974184396841 0.0074972786367515885 0.07749530500489321
-            rotation -0.9477021255080352 -0.30273795452868846 0.10104658428337986 0.010001369885082321
+            translation -0.007472974184396808 0.007497278636751556 0.07749530500489374
+            rotation -0.9477021255080363 -0.3027379545286895 0.10104658428336458 0.010001369885082321
             children [
               Shape {
                 appearance USE IRB_APPEARANCE
@@ -305,7 +305,7 @@ Robot {
                                         ]
                                         endPoint Solid {
                                           translation 0.125001 0 0
-                                          rotation 0.6867687837593196 0.7268180414275474 0.009174546810005181 0.0003179306852862593
+                                          rotation 0.6867687837595359 0.7268180414273431 0.009174546810002597 0.0003179306852862593
                                           children [
                                             SliderJoint {
                                               jointParameters JointParameters {
@@ -398,7 +398,7 @@ Robot {
                                                                                         Shape {
                                                                                           geometry Cylinder {
                                                                                             height 0.05
-                                                                                            radius 0.0145
+                                                                                            radius 0.014
                                                                                           }
                                                                                         }
                                                                                       ]
@@ -409,7 +409,7 @@ Robot {
                                                                                         Shape {
                                                                                           geometry Cylinder {
                                                                                             height 0.05
-                                                                                            radius 0.0145
+                                                                                            radius 0.014
                                                                                           }
                                                                                         }
                                                                                       ]

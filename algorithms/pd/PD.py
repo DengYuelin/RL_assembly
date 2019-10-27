@@ -3,8 +3,8 @@ import numpy as np
 
 class PD:
     def __init__(self):
-        self.kp = np.array([0.01, 0.01, 0.01, 0.005, 0.005, 0.005])
-        self.kd = np.array([0.01, 0.01, 0.01, 0.005, 0.005, 0.005])
+        self.kp = np.array([0.1, 0.1, 0.1, 0.05, 0.05, 0.05])
+        self.kd = np.array([0.1, 0.1, 0.1, 0.05, 0.05, 0.05])
         self.uk = np.array([0, 0, 0, 0, 0, 0])
         self.uk_1 = np.array([0, 0, 0, 0, 0, 0])
         self.yk = np.array([0, 0, 0, 0, 0, 0])
@@ -27,8 +27,8 @@ class PD:
         return action
 
     def clear(self):
-        self.kp = 0.1
-        self.kd = 0.1
+        self.kp = np.array([0.1, 0.1, 0.1, 0.05, 0.05, 0.05])
+        self.kd = np.array([0.1, 0.1, 0.1, 0.05, 0.05, 0.05])
         self.uk = np.array([0, 0, 0, 0, 0, 0])
         self.uk_1 = np.array([0, 0, 0, 0, 0, 0])
         self.yk = np.array([0, 0, 0, 0, 0, 0])
