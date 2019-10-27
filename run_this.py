@@ -12,8 +12,8 @@ data_path = './Data/'
 model_path = './model/' + algorithm_name + "/"
 
 """parameters for running"""
-nb_epochs = 20
-nb_epoch_cycles = 5
+nb_epochs = 50
+nb_epoch_cycles = 50
 nb_rollout_steps = 300
 
 file_name = '_epochs_' + str(nb_epochs)\
