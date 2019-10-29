@@ -32,6 +32,28 @@ DQN_LAVBELS = ['Typical DQN', 'VPB_DQN']
 DDPG_LAVBELS = ['Typical DDPG', 'VPB_DDPG']
 
 
+def plot_force(forces):
+    plt.figure(figsize=(15, 10), dpi=300)
+    # plt.title("Contact forces of one episode")
+    new_forces = np.zeros((len(forces), 6), dtype=np.float32)
+    for i in range(len(forces)):
+        new_forces[i, :] = forces[i][0][:6]
+
+    for j in range(6):
+        plt.plot(new_forces[:, j], linewidth=3.)
+
+    plt.xlabel("Steps", fontsize=30)
+    plt.ylabel("Contact forces: F(N)/M(Nm)", fontsize=30)
+
+    plt.legend(labels=['$F_x$', '$F_y$', '$F_z$', '$M_x$', '$M_y$', '$M_z$'], loc=2, bbox_to_anchor=(0.1, 1.15),
+               borderaxespad=0., fontsize=30, ncol=3)
+    plt.xticks(fontsize=30)
+    plt.yticks(fontsize=30)
+
+    plt.savefig('./figure/single_ddpg_forces_end.pdf')
+    plt.show()
+
+
 def plot_reward(result_path,
          x_labels="episodes", y_labels="reward", file_name='', render=True):
     """ Plot reward steps and times """
@@ -144,7 +166,7 @@ def plot_comparision_curve_with_variance(result_paths, file_name='', render=Fals
 
 if __name__ == "__main__":
 
-    # data = np.load("./pd/_epochs_2_episodes_5_rollout_steps_300reward.npy")
+    # data = np.load("./pd/_epochs_50_episodes_50_rollout_steps_300states.npy")
     # print(data)
-    plot_reward("./pd/_epochs_50_episodes_50_rollout_steps_300steps.npy",
-         file_name="./pd/steps.pdf")
+    plot_reward("./pd/single_no_rand_pos_epochs_50_episodes_50_rollout_steps_300steps.npy",
+         file_name="./pd/singlesteps.pdf")

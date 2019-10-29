@@ -16,7 +16,7 @@ nb_epochs = 50
 nb_epoch_cycles = 50
 nb_rollout_steps = 300
 
-file_name = '_epochs_' + str(nb_epochs)\
+file_name = 'single_no_rand_pos'+'_epochs_' + str(nb_epochs)\
             + "_episodes_" + str(nb_epoch_cycles) + \
             "_rollout_steps_" + str(nb_rollout_steps)
 

@@ -337,7 +337,6 @@ class ArmEnv(object):
         return (np.random.rand(6) - 0.5)/10
 
 
-# input random action to the robot
 if __name__ == '__main__':
     env = ArmEnv()
     count = 0
