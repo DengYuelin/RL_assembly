@@ -168,5 +168,5 @@ if __name__ == "__main__":
 
     # data = np.load("./pd/_epochs_50_episodes_50_rollout_steps_300states.npy")
     # print(data)
-    plot_reward("./pd/Triple_no_rand_pos_epochs_50_episodes_50_rollout_steps_300steps.npy",
-         file_name="./pd/Triplesteps.pdf")
+    plot_reward("./pd/_epochs_50_episodes_50_rollout_steps_300steps.npy",
+         file_name="./pd/Double_norand_steps.pdf")
