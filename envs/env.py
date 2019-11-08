@@ -193,7 +193,7 @@ class ArmEnv(object):
         # take actions
         self.__execute_action(action)
 
-        uncode_state, self.state = self.__get_state()
+        # uncode_state, self.state = self.__get_state()
         # safety check
         safe = cal.safetycheck(self.state)
         # done and reward
