@@ -360,7 +360,7 @@ if __name__ == '__main__':
         plt.plot(env.plt_time, env.plt_TY)
         plt.subplot(236)
         plt.plot(env.plt_time, env.plt_TZ)
-        plt.savefig('No_random_double_'+str(count)+'.png')
+        plt.savefig('random_single_'+str(count)+'.png')
         count += 1
         # plt.show()
         env.reset()

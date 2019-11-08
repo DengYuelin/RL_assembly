@@ -44,13 +44,11 @@ def actions(s, a, en_pd):
         action = action + action * a[0]
     else:
         action = a[0]
-    action[0] /= 8000
-    action[1] /= 8000
-    action[2] /= 3000
 
-    action[3] /= 500
-    action[4] /= 500
-    action[5] /= 10
+    # mm back to m
+    action[0] /= 1000
+    action[1] /= 1000
+    action[2] /= 1000
 
     if action[2] < 0:
         action[2] = 0
