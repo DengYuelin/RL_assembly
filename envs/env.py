@@ -49,7 +49,7 @@ armChain = Chain(name='arm', links=[
         name="E motor",
         bounds=[-2.18166, 2.0944],
         translation_vector=[0.929888, 0, 0],
-        orientation=[0, 1.5708, 0],
+        orientation=[0, 0, 0],
         rotation=[0, 1, 0]
     ),
     URDFLink(
@@ -114,11 +114,12 @@ class ArmEnv(object):
         # Get the arm, target and hole nodes.
         self.target = self.supervisor.getFromDef('TARGET')
         self.arm = self.supervisor.getFromDef('ARM')
-        self.pegroot = self.supervisor.getFromDef('PEGROOT')
         self.hole = self.supervisor.getFromDef('HOLE')
+        self.armEnd = self.supervisor.getFromDef('INIT')
         # Get the absolute position of the arm base and target.
         self.armPosition = self.arm.getPosition()
         self.targetPosition = self.target.getPosition()
+        self.initPosition = self.armEnd.getPosition()
         # Get the translation field fo the hole
         self.hole_translation = self.hole.getField('translation')
         self.hole_rotation = self.hole.getField('rotation')
@@ -160,9 +161,9 @@ class ArmEnv(object):
 
         """Initial Position of the robot"""
         # x/y/z in meters relative to world frame
-        self.x = 0.94455 - self.armPosition[0]
-        self.y = self.armPosition[2]
-        self.z = 2.255 - self.armPosition[1]
+        self.x = 0
+        self.y = 0
+        self.z = 0
         # alpha/beta/gamma in rad relative to initial orientation
         self.alpha = 0
         self.beta = 0
@@ -211,7 +212,7 @@ class ArmEnv(object):
         '''set random position for hole'''
         hole_new_position = self.hole_init_position + (np.random.rand(3)-0.5) / 500
         hole_new_rotation = self.hole_init_rotation + (np.random.rand(4)-0.5) / 80
-        self.hole_translation.setSFVec3f([hole_new_position[0], hole_new_position[1], -0.02])
+        self.hole_translation.setSFVec3f([hole_new_position[0], 2, hole_new_position[2]])
         self.hole_rotation.setSFRotation([hole_new_rotation[0], hole_new_rotation[1], hole_new_rotation[2], hole_new_rotation[3]])
 
         '''reset signals'''
@@ -219,9 +220,9 @@ class ArmEnv(object):
 
         "Initial Position of the robot"
         # x/y/z in meters relative to world frame
-        self.x = 0.94455 - self.armPosition[0]
-        self.y = self.armPosition[2]
-        self.z = 2.255 - self.armPosition[1]
+        self.x = self.initPosition[0] - self.armPosition[0]
+        self.y = -(self.initPosition[2] - self.armPosition[2])
+        self.z = self.initPosition[1] - self.armPosition[1]
         # alpha/beta/gamma in rad relative to initial orientation
         self.alpha = 0.0
         self.beta = 0.0
@@ -287,11 +288,10 @@ class ArmEnv(object):
         self.TX = self.tx_sensor.getTorqueFeedback()
         self.TY = self.ty_sensor.getTorqueFeedback()
         self.TZ = -self.tz_sensor.getTorqueFeedback()
-        self.pegrootPosition = self.pegroot.getPosition()
         currentPosition = []
-        currentPosition.append(self.targetPosition[0] - self.pegrootPosition[0])
-        currentPosition.append(self.targetPosition[2] - self.pegrootPosition[2])
-        currentPosition.append(self.targetPosition[1] - self.pegrootPosition[1])
+        currentPosition.append(self.targetPosition[0] - (self.x + self.armPosition[0]))
+        currentPosition.append(self.targetPosition[2] - (self.armPosition[2] - self.y))
+        currentPosition.append(self.targetPosition[1] - (self.z + self.armPosition[1] - 0.14))
         # state
         state = np.concatenate((currentPosition, [self.alpha, self.beta, self.gamma],
                                 [self.FX, self.FY, self.FZ], [self.TX, self.TY, self.TZ]))
@@ -302,17 +302,17 @@ class ArmEnv(object):
     def __execute_action(self, action):
         """ execute action """
         # do action
-        self.x += action[0]
-        self.y += action[1]
-        self.z -= action[2]
-        self.alpha += action[3]
-        self.beta += action[4]
-        self.gamma -= action[5]
+        # self.x += action[0]
+        # self.y += action[1]
+        # self.z -= action[2]
+        # self.alpha += action[3]
+        # self.beta += action[4]
+        # self.gamma -= action[5]
 
         # bound position
-        self.x = np.clip(self.x, 0.94455 - self.armPosition[0] - 0.02, 0.94455 - self.armPosition[0] + 0.02)
-        self.y = np.clip(self.y, self.armPosition[2] - 0.02, self.armPosition[2] +0.02)
-        self.z = np.clip(self.z, 2.255 - self.armPosition[1] - 0.06, 2.255 - self.armPosition[1] + 0.04)
+        self.x = np.clip(self.x, self.initPosition[0] - self.armPosition[0] - 0.02, self.initPosition[0] - self.armPosition[0] + 0.02)
+        self.y = np.clip(self.y, self.armPosition[2] - self.initPosition[2] - 0.02, self.armPosition[2] - self.initPosition[2] + 0.02)
+        self.z = np.clip(self.z, self.initPosition[1] - self.armPosition[1] - 0.06, self.initPosition[1] - self.armPosition[1] + 0.04)
         self.alpha = np.clip(self.alpha, -1, 1)
         self.beta = np.clip(self.beta, -1, 1)
         self.gamma = np.clip(self.gamma, -1, 1)
@@ -348,19 +348,19 @@ if __name__ == '__main__':
             # if done:
             #     break
         # plot force
-        plt.subplot(231)
-        plt.plot(env.plt_time, env.plt_FX)
-        plt.subplot(232)
-        plt.plot(env.plt_time, env.plt_FY)
-        plt.subplot(233)
-        plt.plot(env.plt_time, env.plt_FZ)
-        plt.subplot(234)
-        plt.plot(env.plt_time, env.plt_TX)
-        plt.subplot(235)
-        plt.plot(env.plt_time, env.plt_TY)
-        plt.subplot(236)
-        plt.plot(env.plt_time, env.plt_TZ)
-        plt.savefig('random_single_'+str(count)+'.png')
-        count += 1
+        # plt.subplot(231)
+        # plt.plot(env.plt_time, env.plt_FX)
+        # plt.subplot(232)
+        # plt.plot(env.plt_time, env.plt_FY)
+        # plt.subplot(233)
+        # plt.plot(env.plt_time, env.plt_FZ)
+        # plt.subplot(234)
+        # plt.plot(env.plt_time, env.plt_TX)
+        # plt.subplot(235)
+        # plt.plot(env.plt_time, env.plt_TY)
+        # plt.subplot(236)
+        # plt.plot(env.plt_time, env.plt_TZ)
+        # plt.savefig('random_single_'+str(count)+'.png')
+        # count += 1
         # plt.show()
         env.reset()

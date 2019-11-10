@@ -4,8 +4,8 @@ WorldInfo {
 }
 Viewpoint {
   fieldOfView 0.85
-  orientation 0.32073689479528805 -0.935798672557445 -0.1463170829288225 5.335407137171138
-  position 2.6535313826633837 2.6518799464373712 1.490801594399788
+  orientation 0.6155955246952837 -0.7582136711267855 -0.2148352366153678 5.392500187231451
+  position 1.7397080772382194 2.6984804257564385 0.7751897760536789
 }
 TexturedBackground {
   texture "empty_office"
@@ -44,8 +44,8 @@ Robot {
       }
     }
     DEF ARM Solid {
-      translation 0 0.5 0
-      rotation 1 0 0 -1.5709819641868883
+      translation -0.00015474820596739214 0.4898365098634522 2.0186844696255826e-05
+      rotation 0.9999994717590412 -0.0007262690719923809 0.0007273340867261888 -1.5709819641868883
       children [
         Shape {
           appearance DEF IRB_APPEARANCE PBRAppearance {
@@ -75,6 +75,7 @@ Robot {
         }
         DEF LINK1_TRANSFORM HingeJoint {
           jointParameters HingeJointParameters {
+            position 0.0003328776318237527
             axis 0 0 1
             anchor 0 0 0.159498
           }
@@ -90,8 +91,8 @@ Robot {
             }
           ]
           endPoint Solid {
-            translation 0 0 0.159498
-            rotation 0 0 1 0
+            translation -0.007472974184396801 0.007497278636751549 0.07749530500489385
+            rotation -0.9477021255080367 -0.30273795452868985 0.1010465842833614 0.010001369885082321
             children [
               Shape {
                 appearance USE IRB_APPEARANCE
@@ -176,7 +177,7 @@ Robot {
                         }
                       ]
                       endPoint Solid {
-                        translation -0.003447 -0.0267 1.09559
+                        translation -0.0034470019320157006 -0.0267 1.0955900000004666
                         rotation 0 0.9999999999999999 0 0.00048300394429526424
                         children [
                           Shape {
@@ -264,21 +265,6 @@ Robot {
                                     translation 0.929888 0 0
                                     rotation 0 1 0 1.5699999948225685
                                     children [
-                                      DEF END2 Solid {
-                                        children [
-                                          Shape {
-                                            appearance PBRAppearance {
-                                              baseColor 0 0 0
-                                              metalness 0
-                                            }
-                                            geometry Sphere {
-                                              radius 0.002
-                                              subdivision 2
-                                            }
-                                          }
-                                        ]
-                                        name "solid(1)"
-                                      }
                                       Shape {
                                         appearance USE IRB_APPEARANCE
                                         geometry IndexedFaceSet {
@@ -319,7 +305,7 @@ Robot {
                                         ]
                                         endPoint Solid {
                                           translation 0.125001 0 0
-                                          rotation 0.6867687837598434 0.7268180414270525 0.009174546809998926 0.0003179306852862593
+                                          rotation 0.6867687837595815 0.7268180414273 0.009174546810002054 0.0003179306852862593
                                           children [
                                             SliderJoint {
                                               jointParameters JointParameters {
@@ -640,15 +626,15 @@ DEF TABLE_WITH_PAPER_SHEET Transform {
   translation 0.5 0 0
   children [
     Table {
-      translation 0.44455 0 0
-      size 1 2 1
+      translation 0.10557599999999999 0 -1.216233
+      size 1 1.9 1
       feetPadding 0.05
       frameThickness 0.1
     }
   ]
 }
 DEF HOLE Solid {
-  translation 0.945661 2 0
+  translation 0.898559 1.9 -0.6669689999999999
   rotation 0 1 0 1.57
   children [
     Transform {
@@ -702,20 +688,4 @@ DEF HOLE Solid {
   ]
   name "solid(1)"
   boundingObject USE HOLE
-}
-DEF INIT Solid {
-  translation 0.945661 2.26377 0.000327
-  children [
-    Shape {
-      appearance PBRAppearance {
-        baseColor 0 0 0
-        metalness 0
-      }
-      geometry Sphere {
-        radius 0.01
-        subdivision 2
-      }
-    }
-  ]
-  name "solid(2)"
 }
