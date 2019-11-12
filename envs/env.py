@@ -180,7 +180,8 @@ class ArmEnv(object):
         uncode_state, self.state = self.__get_state()
 
         # record graph
-        self.plt_current_time += self.timeStep * 0.001
+        # self.plt_current_time += self.timeStep * 0.001  # real time as x axis
+        self.plt_current_time += 1  # step as x axis
         self.plt_time.append(self.plt_current_time)
         self.plt_FX.append(self.state[6])
         self.plt_FY.append(self.state[7])
@@ -340,6 +341,7 @@ class ArmEnv(object):
 if __name__ == '__main__':
     env = ArmEnv()
     count = 0
+    file_name = 'test_data_'
     while True:
         for i in range(200):
             a = env.sample_action()
@@ -348,19 +350,31 @@ if __name__ == '__main__':
             # if done:
             #     break
         # plot force
-        # plt.subplot(231)
-        # plt.plot(env.plt_time, env.plt_FX)
-        # plt.subplot(232)
-        # plt.plot(env.plt_time, env.plt_FY)
-        # plt.subplot(233)
-        # plt.plot(env.plt_time, env.plt_FZ)
-        # plt.subplot(234)
-        # plt.plot(env.plt_time, env.plt_TX)
-        # plt.subplot(235)
-        # plt.plot(env.plt_time, env.plt_TY)
-        # plt.subplot(236)
-        # plt.plot(env.plt_time, env.plt_TZ)
-        # plt.savefig('random_single_'+str(count)+'.png')
-        # count += 1
-        # plt.show()
+        plt_data = np.array(env.plt_time)
+        plt_data = np.stack((plt_data, env.plt_FX))
+        plt_data = np.stack((plt_data, env.plt_FY))
+        plt_data = np.stack((plt_data, env.plt_FZ))
+        plt_data = np.stack((plt_data, env.plt_TX))
+        plt_data = np.stack((plt_data, env.plt_TY))
+        plt_data = np.stack((plt_data, env.plt_TX))
+        print(plt_data)
+        np.save(file_name+str(count)+'.npy', plt_data)
+        plt_data = np.load(file_name+str(count)+'.npy')
+        print("_____load_____")
+        print(plt_data)
+        plt.subplot(231)
+        plt.plot(plt_data[0], plt_data[1])
+        plt.subplot(232)
+        plt.plot(plt_data[0], plt_data[2])
+        plt.subplot(233)
+        plt.plot(plt_data[0], plt_data[3])
+        plt.subplot(234)
+        plt.plot(plt_data[0], plt_data[4])
+        plt.subplot(235)
+        plt.plot(plt_data[0], plt_data[5])
+        plt.subplot(236)
+        plt.plot(plt_data[0], plt_data[6])
+        # plt.savefig(file_name+str(count)+'.png')
+        count += 1
+        plt.show()
         env.reset()
