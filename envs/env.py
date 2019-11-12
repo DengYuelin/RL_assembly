@@ -343,7 +343,7 @@ if __name__ == '__main__':
     count = 0
     file_name = 'test_data_'
     while True:
-        for i in range(200):
+        for i in range(300):
             a = env.sample_action()
             # env.step(a)
             _, _, _, done, r =env.step([(0, 0, 0, 0, 0, 0), ""])
@@ -351,17 +351,15 @@ if __name__ == '__main__':
             #     break
         # plot force
         plt_data = np.array(env.plt_time)
-        plt_data = np.stack((plt_data, env.plt_FX))
-        plt_data = np.stack((plt_data, env.plt_FY))
-        plt_data = np.stack((plt_data, env.plt_FZ))
-        plt_data = np.stack((plt_data, env.plt_TX))
-        plt_data = np.stack((plt_data, env.plt_TY))
-        plt_data = np.stack((plt_data, env.plt_TX))
-        print(plt_data)
+        plt_data = np.vstack((plt_data, env.plt_FX))
+        plt_data = np.vstack((plt_data, env.plt_FY))
+        plt_data = np.vstack((plt_data, env.plt_FZ))
+        plt_data = np.vstack((plt_data, env.plt_TX))
+        plt_data = np.vstack((plt_data, env.plt_TY))
+        plt_data = np.vstack((plt_data, env.plt_TZ))
         np.save(file_name+str(count)+'.npy', plt_data)
-        plt_data = np.load(file_name+str(count)+'.npy')
-        print("_____load_____")
-        print(plt_data)
+        plt_data_2 = np.load(file_name+str(count)+'.npy')
+        print("load", plt_data==plt_data_2)
         plt.subplot(231)
         plt.plot(plt_data[0], plt_data[1])
         plt.subplot(232)
