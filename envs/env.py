@@ -149,15 +149,6 @@ class ArmEnv(object):
         self.TX = self.tx_sensor.getTorqueFeedback()
         self.TY = self.ty_sensor.getTorqueFeedback()
         self.TZ = self.tz_sensor.getTorqueFeedback()
-        # Used to plot F/T_t
-        self.plt_FX = []
-        self.plt_FY = []
-        self.plt_FZ = []
-        self.plt_TX = []
-        self.plt_TY = []
-        self.plt_TZ = []
-        self.plt_time = []
-        self.plt_current_time = 0
 
         """Initial Position of the robot"""
         # x/y/z in meters relative to world frame
@@ -178,17 +169,6 @@ class ArmEnv(object):
         self.timer += 1
         # read state
         uncode_state, self.state = self.__get_state()
-
-        # record graph
-        # self.plt_current_time += self.timeStep * 0.001  # real time as x axis
-        self.plt_current_time += 1  # step as x axis
-        self.plt_time.append(self.plt_current_time)
-        self.plt_FX.append(self.state[6])
-        self.plt_FY.append(self.state[7])
-        self.plt_FZ.append(self.state[8])
-        self.plt_TX.append(self.state[9])
-        self.plt_TY.append(self.state[10])
-        self.plt_TZ.append(self.state[11])
 
         # adjust action to usable motion
         action = cal.actions(self.state, action, self.pd)
@@ -256,17 +236,6 @@ class ArmEnv(object):
         '''state'''
         # get
         uncode_init_state, self.init_state, = self.__get_state()
-
-        '''reset graph'''
-        # Used to plot F/T_t
-        self.plt_FX.clear()
-        self.plt_FY.clear()
-        self.plt_FZ.clear()
-        self.plt_TX.clear()
-        self.plt_TY.clear()
-        self.plt_TZ.clear()
-        self.plt_time.clear()
-        self.plt_current_time = 0
 
         print('initial state:')
         print("State 0-3", self.init_state[0:3])
@@ -343,36 +312,53 @@ if __name__ == '__main__':
     count = 0
     file_name = 'test_data_'
     while True:
-        for i in range(300):
+        # prepare to plt force and position
+        time = 0
+        plt_data = np.empty([13, 1])
+
+        for i in range(200):
             a = env.sample_action()
             # env.step(a)
-            _, _, _, done, r =env.step([(0, 0, 0, 0, 0, 0), ""])
+            s, _, r, done, _ = env.step([(0, 0, 0, 0, 0, 0), ""])
             # if done:
             #     break
-        # plot force
-        plt_data = np.array(env.plt_time)
-        plt_data = np.vstack((plt_data, env.plt_FX))
-        plt_data = np.vstack((plt_data, env.plt_FY))
-        plt_data = np.vstack((plt_data, env.plt_FZ))
-        plt_data = np.vstack((plt_data, env.plt_TX))
-        plt_data = np.vstack((plt_data, env.plt_TY))
-        plt_data = np.vstack((plt_data, env.plt_TZ))
+            state = np.array([np.append(s, time)]).T
+            if time == 0:
+                plt_data = state
+            else:
+                plt_data = np.dstack((plt_data, state))
+            time += 1
+        # save all states
         np.save(file_name+str(count)+'.npy', plt_data)
-        plt_data_2 = np.load(file_name+str(count)+'.npy')
-        print("load", plt_data==plt_data_2)
+        # plot position
         plt.subplot(231)
-        plt.plot(plt_data[0], plt_data[1])
+        plt.plot(plt_data[12][0], plt_data[0][0])
         plt.subplot(232)
-        plt.plot(plt_data[0], plt_data[2])
+        plt.plot(plt_data[12][0], plt_data[1][0])
         plt.subplot(233)
-        plt.plot(plt_data[0], plt_data[3])
+        plt.plot(plt_data[12][0], plt_data[2][0])
         plt.subplot(234)
-        plt.plot(plt_data[0], plt_data[4])
+        plt.plot(plt_data[12][0], plt_data[3][0])
         plt.subplot(235)
-        plt.plot(plt_data[0], plt_data[5])
+        plt.plot(plt_data[12][0], plt_data[4][0])
         plt.subplot(236)
-        plt.plot(plt_data[0], plt_data[6])
-        # plt.savefig(file_name+str(count)+'.png')
+        plt.plot(plt_data[12][0], plt_data[5][0])
+        plt.savefig(file_name+'position'+str(count)+'.png')
+        # plot force
+        plt.figure()
+        plt.subplot(231)
+        plt.plot(plt_data[12][0], plt_data[6][0])
+        plt.subplot(232)
+        plt.plot(plt_data[12][0], plt_data[7][0])
+        plt.subplot(233)
+        plt.plot(plt_data[12][0], plt_data[8][0])
+        plt.subplot(234)
+        plt.plot(plt_data[12][0], plt_data[9][0])
+        plt.subplot(235)
+        plt.plot(plt_data[12][0], plt_data[10][0])
+        plt.subplot(236)
+        plt.plot(plt_data[12][0], plt_data[11][0])
+        plt.savefig(file_name+'force'+str(count)+'.png')
         count += 1
         plt.show()
         env.reset()
