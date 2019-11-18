@@ -193,8 +193,12 @@ class ArmEnv(object):
         '''set random position for hole'''
         hole_new_position = self.hole_init_position + (np.random.rand(3)-0.5) / 500
         hole_new_rotation = self.hole_init_rotation + (np.random.rand(4)-0.5) / 80
+        # hole_new_position = self.hole_init_position + (np.array([0.01871559, 0.02142697, -0.06982981])) / 500
+        # hole_new_rotation = self.hole_init_rotation + (np.array([0.01901839, -0.01341116, -0.03468365, 0.44052017])) / 80
+        # apply random position
         self.hole_translation.setSFVec3f([hole_new_position[0], 2, hole_new_position[2]])
         self.hole_rotation.setSFRotation([hole_new_rotation[0], hole_new_rotation[1], hole_new_rotation[2], hole_new_rotation[3]])
+
 
         '''reset signals'''
         self.timer = 0
@@ -310,8 +314,8 @@ class ArmEnv(object):
 if __name__ == '__main__':
     env = ArmEnv()
     count = 0
-    file_name = 'test_data_'
-    while True:
+    file_name = 'Double_rand_f0.5_s1.5_'
+    for j in range(10):
         # prepare to plt force and position
         time = 0
         plt_data = np.empty([13, 1])
@@ -331,6 +335,7 @@ if __name__ == '__main__':
         # save all states
         np.save(file_name+str(count)+'.npy', plt_data)
         # plot position
+        plt.figure()
         plt.subplot(231)
         plt.plot(plt_data[12][0], plt_data[0][0])
         plt.subplot(232)
@@ -360,5 +365,4 @@ if __name__ == '__main__':
         plt.plot(plt_data[12][0], plt_data[11][0])
         plt.savefig(file_name+'force'+str(count)+'.png')
         count += 1
-        plt.show()
         env.reset()
