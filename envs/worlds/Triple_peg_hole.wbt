@@ -4,8 +4,8 @@ WorldInfo {
 }
 Viewpoint {
   fieldOfView 0.85
-  orientation 0.6266681538661161 -0.7564109588107961 -0.1874286166010036 5.498370863805528
-  position 1.6155665295378285 2.5388118037385548 0.5619659767499073
+  orientation 0.5160381187071993 -0.8530548358987617 -0.0774732662979367 5.867655896387113
+  position 1.3652067573822348 2.325677648145318 0.9644334551242548
 }
 TexturedBackground {
   texture "empty_office"
@@ -407,7 +407,7 @@ Robot {
                                                                                 DEF PEG Group {
                                                                                   children [
                                                                                     Transform {
-                                                                                      translation 0 0 0.065
+                                                                                      translation 0 0 0.035
                                                                                       children [
                                                                                         Shape {
                                                                                           geometry Cylinder {
@@ -418,7 +418,7 @@ Robot {
                                                                                       ]
                                                                                     }
                                                                                     Transform {
-                                                                                      translation -0.04 0 0
+                                                                                      translation -0.04 0 -0.03
                                                                                       children [
                                                                                         Shape {
                                                                                           geometry Cylinder {
@@ -429,7 +429,7 @@ Robot {
                                                                                       ]
                                                                                     }
                                                                                     Transform {
-                                                                                      translation 0.04 0 0
+                                                                                      translation 0.04 0 -0.03
                                                                                       children [
                                                                                         Shape {
                                                                                           geometry Cylinder {
@@ -659,7 +659,7 @@ DEF TABLE_WITH_PAPER_SHEET Transform {
   ]
 }
 DEF HOLE Solid {
-  translation 0.945661 2 0
+  translation 0.915661 2 0
   rotation 0 1 0 1.57
   children [
     Transform {
@@ -695,7 +695,7 @@ DEF HOLE Solid {
       ]
     }
     DEF TARGET Solid {
-      translation 0 0.07 0
+      translation 0 0.07 0.03
       rotation -1 0 0 1.5707959999999999
       children [
         Shape {
